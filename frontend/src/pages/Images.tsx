@@ -1,7 +1,7 @@
-import {ListImages} from "../../wailsjs/go/main/DockerApp";
 import {image} from "../../wailsjs/go/models";
 import {useEffect, useState} from "preact/hooks";
 import {h, Fragment} from 'preact';
+import {ImageList} from "../../wailsjs/go/main/App";
 
 
 export function Images(props: any) {
@@ -9,7 +9,7 @@ export function Images(props: any) {
     const updateImages = (list: Array<image.Summary>) => setImages(list);
 
     useEffect(() => {
-        ListImages().then(updateImages);
+        ImageList().then(updateImages);
     }, []);
 
     return (

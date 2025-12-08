@@ -1,4 +1,4 @@
-import {ListVolumes} from "../../wailsjs/go/main/DockerApp";
+import {VolumeList} from "../../wailsjs/go/main/App";
 import {volume} from "../../wailsjs/go/models";
 import {useEffect, useState} from "preact/hooks";
 import {h, Fragment} from 'preact';
@@ -9,7 +9,7 @@ export function Volumes(props: any) {
     const updateVolumes = (list: Array<volume.Volume>) => setVolumes(list);
 
     useEffect(() => {
-        ListVolumes().then(updateVolumes);
+        VolumeList().then(updateVolumes);
     }, []);
 
 

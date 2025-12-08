@@ -3,16 +3,28 @@ package main
 import (
 	"context"
 	"fmt"
+
+	"github.com/moby/moby/client"
+	"github.com/wailsapp/wails/v2/pkg/logger"
 )
 
 // App struct
 type App struct {
 	ctx context.Context
+	cli client.APIClient
+	log logger.Logger
 }
 
 // NewApp creates a new App application struct
 func NewApp() *App {
-	return &App{}
+	apiClient, err := client.New()
+	if err != nil {
+		panic(err)
+	}
+	return &App{
+		cli: apiClient,
+		log: logger.NewDefaultLogger(),
+	}
 }
 
 // startup is called when the app starts. The context is saved
