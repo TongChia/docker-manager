@@ -1,8 +1,30 @@
 @import "tailwindcss";
-@plugin "daisyui";
+
+@plugin "daisyui" {
+    root: ":root";
+    logs: true;
+}
 
 html {
-    background-color: rgba(0,0,0,0);
+    background-color: rgba(0, 0, 0, 0);
+    scrollbar-color: color-mix(in oklch, currentColor 20%, #0000) #0000;
+    scrollbar-width: thin;
+
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: color-mix(in oklch, currentColor 20%, #0000)
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #000;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
 }
 
 body {
@@ -27,17 +49,22 @@ body {
     position: fixed;
 }
 
+.navbar {
+    --wails-draggable: drag;
+}
+
 /* Custom menu */
 .menu.my-menu {
     :where(li > details > summary) {
         &:after {
             display: none;
         }
+
         &:before {
             justify-self: flex-start;
             display: block;
-            height: 0.375rem;
-            width: 0.375rem;
+            height: 6px;
+            width: 6px;
             rotate: 135deg;
             translate: 0 -1px;
             transition-property: rotate, translate;
@@ -53,8 +80,97 @@ body {
         rotate: 225deg;
     }
 
-    :where(li:not(.menu-title) > details > summary:not(.menu-title)) {
-        display: grid;
-        grid-auto-columns: minmax(auto, max-content) max-content auto ;
+    & > li > span > a {
+        padding-left: 12px;
+    }
+
+    & > li.stopped {
+        /*opacity: 50%;*/
+        /*color: var(--color-base-content) 10%;*/
+        color: color-mix(in oklab, var(--color-base-content) 50%, transparent);
+
+        .icon {
+            /*opacity: 70%;*/
+        }
+
+        .menu-active {
+            /*background-color: color-mix(in oklab, var(--menu-active-bg) 60%, transparent);*/
+            color: color-mix(in oklab, var(--color-primary-content) 80%, transparent);
+            background-color: color-mix(in oklab, var(--color-primary) 60%, transparent);
+        }
+
+        &:not(.stopped ~ .stopped) {
+            &:before {
+                display: block;
+                padding: 24px 24px 0;
+                font-size: small;
+                font-weight: bold;
+                /*color: var(--color-base-content);*/
+                content: "Stopped";
+            }
+        }
+    }
+
+
+    fill: var(--color-info);
+
+    .menu-active {
+        :where(:not(ul, details, .menu-title, .btn))& {
+            /*color: var(--menu-active-fg);*/
+            color: var(--color-primary-content);
+            fill: var(--color-primary-content);
+            background-color: var(--color-primary);
+
+            /*background-color: color-mix(in oklab, var(--menu-active-bg) 80%, transparent);*/
+        }
+    }
+}
+
+.menu.main-menu {
+    font-weight: bold;
+
+    li:not(.menu-title, .disabled) > a.menu-active-2:not(.menu-active) {
+        @supports (color: color-mix(in lab, red, red)) {
+            background-color: color-mix(in oklab, var(--color-base-content) 10%, transparent);
+        }
+    }
+
+    fill: var(--color-primary);
+
+    .menu-active {
+        :where(:not(ul, details, .menu-title, .btn))& {
+            /*color: var(--menu-active-fg);*/
+            color: var(--color-primary-content);
+            fill: var(--color-primary-content);
+            background-color: var(--color-primary);
+
+            /*background-color: color-mix(in oklab, var(--menu-active-bg) 80%, transparent);*/
+        }
+    }
+}
+
+.copy-text {
+    .copy-icon {
+        opacity: 0;
+    }
+    &:hover, &.copy-text-ok {
+        .copy-icon {
+            opacity: 1;
+        }
+    }
+}
+
+.open-folder {
+    .folder-open-icon {
+        display: none;
+    }
+    &:hover {
+        .folder-icon {
+            display: none;
+        }
+        
+        .folder-open-icon {
+            display: block;
+        }
     }
 }

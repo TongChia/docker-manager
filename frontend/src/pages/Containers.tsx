@@ -1,71 +1,67 @@
-import {ContainerList} from "../../wailsjs/go/main/App";
-import {container} from "../../wailsjs/go/models";
-import {useEffect, useState} from "preact/hooks";
-import {h, Fragment} from 'preact';
-import {DeleteBtn, PlayStopBtn} from "../components/buttons";
-
-const isK8sContainer = (container: container.Summary) =>
-    Object.keys(container.Labels).some(label => label.startsWith('io.kubernetes'));
-
-const isComposeContainer = (container: container.Summary) =>
-    Object.keys(container.Labels).some(label => label.startsWith('com.docker.compose'));
-
-const isStopped = (container: container.Summary) =>
-    container.State === 'exited' || container.State === 'paused';
+import {useEffect} from "preact/hooks";
+import {Fragment, h} from 'preact';
+import {PlusBtn, SearchBtn, ShareBtn} from "../components/buttons";
+import {map} from "lodash";
+import {ContainerInfo} from "./ContainerInfo";
+import {Route, Router} from "preact-iso";
+import {grouped, is$Compose, is$Container, listen, running, state, update} from "../states/Container";
+import {ContainerDropdown, ContainerItem} from "../components/ContainerMenu";
+import {cx} from "../utils/classnames";
 
 export function Containers(props: any) {
-    const [containers, setContainers] = useState<Array<container.Summary>>([]);
-    const updateContainers = (list: Array<container.Summary>) => {
-        let k8sContainers = [], composeContainers = [], otherContainers = [];
-
-        for (const c of list) {
-            if (isK8sContainer(c)) {
-                k8sContainers.push(c);
-            } else if (isComposeContainer(c)) {
-                composeContainers.push(c);
-            } else {
-                otherContainers.push(c);
-            }
-        }
-
-        setContainers(otherContainers);
-    }
+    const containers = grouped.value
 
     useEffect(() => {
-        // window.addEventListener('resize', onResize);
-        // return () => window.removeEventListener('resize', onResize);
-        ContainerList().then(updateContainers);
+        update().then(() => console.debug("updated containers", state.value))
+        return listen()
     }, []);
 
     return (
-        <div>
-            {containers.length === 0 ? (
-                <div>
-                    <p>No containers found. Click "Fetch Containers" to load.</p>
-                </div>
-            ) : (
-                <div>
+        <>
+            <div className="flex flex-col content-normal w-90 h-dvh">
+                {/* Navbar */}
+                <nav className="navbar w-full bg-base-300 grow-0 flex justify-between">
+                    <div className="px-4">
+                        <p className="font-bold">Containers</p>
+                        <p className="text-xs text-base-content/50">{running.value || "None"} running</p>
+                    </div>
+                    <SearchBtn/>
+                </nav>
+                {/* Page content here */}
+                <div className="flex-1 h-full bg-base-200 overflow-y-scroll">
                     <ul className="menu my-menu w-full">
-                        <li className="menu-title text-left text-xs font-bold text-base-content/20 is-drawer-close:hidden">Stopped</li>
-                        <li>
-                            <details>
-                                <summary>
-                                    <svg className="fill-cyan-500 h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-400 40-640l440-240 440 240-440 240Zm0 160L63-467l84-46 333 182 333-182 84 46-417 227Zm0 160L63-307l84-46 333 182 333-182 84 46L480-80Zm0-411 273-149-273-149-273 149 273 149Zm0-149Z"/></svg>
-                                    <div>ns-workspace</div>
-                                        {/* Status */}
-                                    <PlayStopBtn status={"Stopped"} />
-                                    <DeleteBtn />
-                                </summary>
-                                <ul>
-                                    <li><a>Submenu 1</a></li>
-                                    <li><a>Submenu 2</a></li>
-                                </ul>
-                            </details>
-                        </li>
-                        <li><a>Item 3</a></li>
+                        {map(containers, item =>
+                            is$Container(item) ? <ContainerItem key={item.id} data={item}/> :
+                                is$Compose(item) ? <ContainerDropdown key={item.id} data={item}/> : ""
+                        )}
                     </ul>
                 </div>
-            )}
-        </div>
+            </div>
+
+            <div className="h-dvh flex flex-col bg-base-100 w-full">
+
+                <nav className="navbar w-full grow-0 flex justify-between px-4">
+                    <PlusBtn/>
+                    <div role="tablist" className="tabs tabs-box capitalize">
+                        {map(["info", "logs", "terminal", "files"], (tab) => (
+                            <a key={tab} role="tab" className={cx("tab w-18", {"tab-active": props.rest == `/${tab}`})}
+                               href={tab}>{tab}</a>
+                        ))}
+                    </div>
+                    <ShareBtn/>
+                </nav>
+
+                <div className="p-4 overflow-y-auto grow">
+                    <Router>
+                        <Route component={ContainerInfo} path="/info"/>
+                        <Route default component={() => (
+                            <div>
+                                <h1>No Content</h1>
+                            </div>)
+                        }/>
+                    </Router>
+                </div>
+            </div>
+        </>
     )
 }

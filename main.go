@@ -7,6 +7,7 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 	"github.com/wailsapp/wails/v2/pkg/options/mac"
+	"github.com/wailsapp/wails/v2/pkg/options/windows"
 )
 
 //go:embed all:frontend/dist
@@ -18,9 +19,11 @@ func main() {
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:  "docker-manager",
-		Width:  1024,
-		Height: 768,
+		Title:     "docker-manager",
+		Width:     1024,
+		Height:    768,
+		MinWidth:  768,
+		MinHeight: 384,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
@@ -37,7 +40,13 @@ func main() {
 			WindowIsTranslucent:  true,
 		},
 
-		OnStartup: app.startup,
+		Windows: &windows.Options{
+			WebviewIsTransparent: true,
+			WindowIsTranslucent:  true,
+		},
+
+		OnStartup:  app.startup,
+		OnShutdown: app.shutdown,
 		Bind: []interface{}{
 			app,
 		},
