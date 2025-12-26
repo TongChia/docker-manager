@@ -3,44 +3,50 @@ package main
 import (
 	"context"
 	"fmt"
+	"log/slog"
 
 	"github.com/moby/moby/api/types/events"
 	"github.com/samber/ro"
-	"github.com/wailsapp/wails/v2/pkg/logger"
-	"github.com/wailsapp/wails/v2/pkg/runtime"
+	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
 // App struct
 type App struct {
+	app *application.App
+
 	ctx context.Context
-	log logger.Logger
+	log *slog.Logger
 	cli *APIClient
 	bus ro.Subject[events.Message]
 }
 
 // NewApp creates a new App application struct
-func NewApp() *App {
+func NewApp(app *application.App) *App {
 	return &App{
-		log: logger.NewDefaultLogger(),
+		app: app,
+		log: slog.Default(),
 		bus: ro.NewPublishSubject[events.Message](),
 	}
 }
 
-// startup is called when the app starts. The context is saved
+// ServiceStartup is called when the app starts. The context is saved
 // so we can call the runtime methods
-func (a *App) startup(ctx context.Context) {
+func (a *App) ServiceStartup(ctx context.Context, options application.ServiceOptions) error {
 	a.ctx = ctx
 	_ = a.connectApiClient()
 	a.bus.SubscribeWithContext(ctx, ro.OnNext(func(msg events.Message) {
-		a.log.Trace(fmt.Sprintf("message: %+v", msg))
-		runtime.EventsEmit(ctx, fmt.Sprintf("message:%s", msg.Type), msg)
+		a.log.Debug(fmt.Sprintf("message: %+v", msg))
+		a.app.Event.Emit(fmt.Sprintf("message:%s", msg.Type), msg)
 	}))
 	a.log.Info("App startup!")
+	return nil
 }
 
-func (a *App) shutdown(ctx context.Context) {
+func (a *App) ServiceShutdown() error {
 	_ = a.cli.Close()
 	a.bus.Complete()
+	a.log.Info("App shutdown!")
+	return nil
 }
 
 // Greet returns a greeting for the given name

@@ -12,7 +12,7 @@ export function Containers(props: any) {
     const containers = grouped.value
 
     useEffect(() => {
-        update().then(() => console.debug("updated containers", state.value))
+        update().catch((err) => console.error("failed to update containers", err))
         return listen()
     }, []);
 

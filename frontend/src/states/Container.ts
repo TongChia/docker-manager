@@ -1,7 +1,7 @@
 import {computed, Signal, signal} from "@preact/signals";
-import {container, events} from "../../wailsjs/go/models";
-import {EventsOnMultiple} from "../../wailsjs/runtime";
-import {ContainerById, ContainerList, StartContainer, StopContainer} from "../../wailsjs/go/main/App";
+// import {Summary} from "../../bindings/github.com/moby/moby/api/types/container";
+import { Events } from '@wailsio/runtime'
+import {ContainerById, ContainerList, StartContainer, StopContainer} from "../../bindings/docker-manager";
 import {memoizeUUID} from "../utils/uuid";
 import {isCompose, isK8s} from "../utils/container";
 import {
@@ -31,7 +31,7 @@ export interface $Summary {
     isStop: boolean
 }
 
-export class $Container extends container.Summary implements $Summary {
+export class $Container extends Summary implements $Summary {
     public type: $Summary["type"] = "Container"
 
     constructor(
@@ -193,7 +193,7 @@ export const listen = () => {
 	ActionUnmount      Action = "unmount"
      */
 
-    return EventsOnMultiple("message:container", (msg: events.Message) => {
+    return Events.OnMultiple("message:container", (msg: any) => {
         console.debug("get action", msg.Action, msg.Actor.ID, msg)
         switch (msg.Action) {
             case "create":

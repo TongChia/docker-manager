@@ -12,7 +12,7 @@ import (
 	"github.com/samber/lo"
 	"github.com/samber/ro"
 	rostdio "github.com/samber/ro/plugins/stdio"
-	"github.com/wailsapp/wails/v2/pkg/runtime"
+	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
 // ContainerList 容器列表
@@ -26,7 +26,7 @@ func (a *App) ContainerList() ([]container.Summary, error) {
 	return r.Items, nil
 }
 
-// ContainerList 容器
+// ContainerById 容器
 func (a *App) ContainerById(Id string) (*container.Summary, error) {
 	opt := client.ContainerListOptions{All: true}
 	opt.Filters = make(client.Filters).Add("id", Id)
@@ -49,7 +49,7 @@ func (a *App) ContainerLogs(containerId string) error {
 		return err
 	}
 
-	runtime.EventsOnce(ctx, eventName, func(optionalData ...interface{}) {
+	a.app.Event.On(eventName, func(e *application.CustomEvent) {
 		cancel()
 	})
 
@@ -60,7 +60,7 @@ func (a *App) ContainerLogs(containerId string) error {
 		}),
 		ro.BufferWhen[string, int64](ro.Interval(200*time.Millisecond)),
 	).SubscribeWithContext(ctx, ro.OnNext(func(lines []string) {
-		runtime.EventsEmit(ctx, eventName, lines)
+		a.app.Event.Emit(eventName, lines)
 	}))
 	return nil
 }
@@ -78,18 +78,19 @@ func (a *App) StartContainer(containerIds []string) error {
 		_, err := a.cli.ContainerStart(a.ctx, containerId, client.ContainerStartOptions{})
 		return err
 	})
-	a.log.Trace(fmt.Sprintf("Start containers %v %v", containerIds, errs))
+	a.log.Debug(fmt.Sprintf("Start containers %v %v", containerIds, errs))
 	return errors.Join(errs...)
 }
 
 func (a *App) OpenFolder(path string) error {
 	// TODO: test Windows / Linux ?
-	info := runtime.Environment(a.ctx)
+	info := a.app.Env.Info()
+
 	cmd := &exec.Cmd{}
-	if info.Platform == "darwin" {
+	if info.OS == "darwin" {
 		cmd = exec.Command("open", path)
 	}
-	if info.Platform == "windows" {
+	if info.OS == "windows" {
 		cmd = exec.Command("explorer", path)
 	}
 	err := cmd.Run()
