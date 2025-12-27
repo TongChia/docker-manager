@@ -1,11 +1,11 @@
 import {computed, Signal, signal} from "@preact/signals";
-// import {Summary} from "../../bindings/github.com/moby/moby/api/types/container";
-import { Events } from '@wailsio/runtime'
-import {ContainerById, ContainerList, StartContainer, StopContainer} from "../../bindings/docker-manager";
+import * as container from "../../bindings/github.com/moby/moby/api/types/container";
+import * as events from "../../bindings/github.com/moby/moby/api/types/events";
+import {Events} from '@wailsio/runtime'
+import {ContainerById, ContainerList, StartContainer, StopContainer} from "../../bindings/docker-manager/app";
 import {memoizeUUID} from "../utils/uuid";
-import {isCompose, isK8s} from "../utils/container";
+import {isCompose, isK8s} from "../utils/docker";
 import {
-    assign,
     concat,
     every,
     filter,
@@ -15,11 +15,13 @@ import {
     includes,
     map,
     reject,
-    replace, set,
+    replace,
+    set,
     size,
     some,
     sortBy
 } from "lodash";
+import {WailsEvent} from "@wailsio/runtime/types/events";
 
 type SummaryType = "Kubernetes" | "Compose" | "Container" | "Pod"
 
@@ -31,7 +33,7 @@ export interface $Summary {
     isStop: boolean
 }
 
-export class $Container extends Summary implements $Summary {
+export class $Container extends container.Summary implements $Summary {
     public type: $Summary["type"] = "Container"
 
     constructor(
@@ -117,11 +119,13 @@ export const update = () => ContainerList().then((list) => {
 })
 
 export const addOne = (Id: string) => ContainerById(Id).then(item => {
-    state.value = concat(state.peek(), new $Container(item))
+    if (item)
+        state.value = concat(state.peek(), new $Container(item))
 })
 
 export const updateOne = (Id: string) => ContainerById(Id).then(item => {
-    state.value = map(state.peek(), ($item) => $item.Id == Id ? new $Container(item) : $item)
+    if (item)
+        state.value = map(state.peek(), ($item) => $item.Id == Id ? new $Container(item) : $item)
 })
 
 export const removeOne = (Id: string) => {
@@ -147,7 +151,7 @@ export const grouped = computed<$Summary[]>(() => {
     return sortBy(concat([], k8s, projects, others), "isStop")
 });
 
-export const running = computed(() => size(filter(state.value, {"state": "running"})))
+export const running = computed(() => size(filter(state.value, item => includes(["running", "loading"], item.state))))
 
 export const listen = () => {
 
@@ -193,8 +197,9 @@ export const listen = () => {
 	ActionUnmount      Action = "unmount"
      */
 
-    return Events.OnMultiple("message:container", (msg: any) => {
-        console.debug("get action", msg.Action, msg.Actor.ID, msg)
+    return Events.On("message:container", (ev: WailsEvent<"message:container">) => {
+        const msg = ev.data as events.Message
+        console.debug("get action", msg)
         switch (msg.Action) {
             case "create":
                 return addOne(msg.Actor.ID)
@@ -210,5 +215,5 @@ export const listen = () => {
             default :
                 console.debug("Unhandled action", msg.Action)
         }
-    }, 0)
+    })
 }

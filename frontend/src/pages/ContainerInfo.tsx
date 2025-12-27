@@ -2,14 +2,16 @@ import {Fragment, h} from 'preact';
 import {find, get, head, isEmpty, map} from "lodash";
 import {$Compose, $Container, $Summary, grouped, is$Compose, is$Container, state, updateOne} from "../states/Container";
 import {cx} from "../utils/classnames";
-import {ErrorBoundary, RoutePropsForPath} from "preact-iso";
+import {RoutePropsForPath} from "preact-iso";
 import {useEffect} from "preact/hooks";
 import {CopyText} from "../components/CopyText";
-import {OpenFolder} from "../../wailsjs/go/main/App";
+import {OpenFolder} from "../../bindings/docker-manager/app";
 import {ChevronRightIcon, FolderIcon, FolderOpenIcon} from "../components/icons";
+import {NoContent} from "../components/NoContent";
+import {LabelsTable} from "../components/LabelsTable";
 
 export function ContainerInfo({params}: RoutePropsForPath<"/:id/*">) {
-    const selected = (find(state.value, {id: params.id}) || find(grouped.value, {id: params.id})) as $Summary
+    const selected = (find(state.value, {id: params.id}) || find(grouped.value, {id: params.id})) || {} as $Summary
 
     useEffect(() => {
         if (is$Container(selected))
@@ -19,7 +21,7 @@ export function ContainerInfo({params}: RoutePropsForPath<"/:id/*">) {
     return is$Container(selected) ? (
         <>
             <BasicInfoTable data={selected}/>
-            <LabelsTable data={selected}/>
+            <LabelsTable Labels={selected.Labels}/>
         </>
     ) : is$Compose(selected) ? (
         <>
@@ -27,7 +29,7 @@ export function ContainerInfo({params}: RoutePropsForPath<"/:id/*">) {
             <OpenComposeFolder data={selected}/>
         </>
     ) : (
-        <ErrorBoundary/>
+        <NoContent/>
     )
 }
 
@@ -84,53 +86,24 @@ const BasicInfoTable = ({data}: { data: $Container }) => {
     )
 }
 
-const LabelsTable = ({data}: { data: $Container }) => {
-    if (isEmpty(data.Labels)) return ""
-    return (
-        <>
-            <h4 className="py-4 px-2 mt-4 font-bold text-sm text-base-content/30">Labels</h4>
-            <div className="overflow-x-auto rounded-box border border-base-content/20">
-                <table className="table table-sm table-zebra table-fixed truncate text-nowrap">
-                    <thead>
-                    <tr>
-                        <th className="w-6/12">Key</th>
-                        <th className="w-6/12">Value</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {map(data.Labels, (value, label) => (
-                        <tr key={label}>
-                            <td>
-                                <CopyText text={label} />
-                            </td>
-                            <td>
-                                <CopyText text={value} />
-                            </td>
-                        </tr>
-                    ))}
-                    </tbody>
-                </table>
-            </div>
-        </>
-    )
-}
-
 const OpenComposeFolder = ({data}: { data: $Compose }) => {
     const onClick = () => {
         const path = get(head(data.items), ["Labels", "com.docker.compose.project.working_dir"])
         if (path) OpenFolder(path).catch(console.error)
     }
     return (
-        <div className="overflow-x-auto rounded-box border border-base-content/20 p-2 mt-4 text-sm flex gap-2 items-center open-folder" onClick={onClick}>
+        <div
+            className="overflow-x-auto rounded-box border border-base-content/20 p-2 mt-4 text-sm flex gap-2 items-center open-folder"
+            onClick={onClick}>
             <span>
-                <FolderIcon className="w-6 fill-current folder-icon" />
-                <FolderOpenIcon className="w-6 fill-current folder-open-icon" />
+                <FolderIcon className="w-6 fill-current folder-icon"/>
+                <FolderOpenIcon className="w-6 fill-current folder-open-icon"/>
             </span>
             <span className="grow">
                 Show in Finder
             </span>
             <span>
-                <ChevronRightIcon className="w-4 fill-current/50" />
+                <ChevronRightIcon className="w-4 fill-current/50"/>
             </span>
         </div>
     )

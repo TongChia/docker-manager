@@ -2,7 +2,7 @@ import {render} from 'preact';
 import {App} from './app';
 import './style.css';
 
-if (!('go' in window)) {
+if (!('_wails' in window)) {
     location.replace('/');
 }
 

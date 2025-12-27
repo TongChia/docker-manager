@@ -1,16 +1,16 @@
 import {h} from "preact";
-import {useLocation, useRoute} from "preact-iso";
+import {useLocation} from "preact-iso";
 import {
+    ContainerFillIcon,
     ContainerIcon,
     ImageIcon,
     NetworkIcon,
-    ContainerFillIcon,
     ServiceIcon,
     SettingsIcon,
     TerminalIcon,
     VolumeIcon
 } from "./icons";
-import {map, split, startsWith} from "lodash";
+import {map, startsWith} from "lodash";
 import {cx} from "../utils/classnames";
 
 export const MainMenu = () => {
@@ -42,7 +42,10 @@ export const MainMenu = () => {
 
             {map(menus.Docker, (m) => (
                 <li>
-                    <a className={cx("is-drawer-close:tooltip is-drawer-close:tooltip-right", {"menu-active": path == m.href, "menu-active-2": startsWith(path, m.root)})}
+                    <a className={cx("is-drawer-close:tooltip is-drawer-close:tooltip-right", {
+                        "menu-active": path == m.href,
+                        "menu-active-2": startsWith(path, m.root)
+                    })}
                        data-tip={m.name} href={m.href}>
                         {m.icon()}
                         <span className="is-drawer-close:hidden">{m.name}</span>
@@ -55,7 +58,10 @@ export const MainMenu = () => {
 
             {map(menus.Kubernetes, m => (
                 <li>
-                    <a className={cx("is-drawer-close:tooltip is-drawer-close:tooltip-right", {"menu-active": path == m.href, "menu-active-2": startsWith(path, m.href)})}
+                    <a className={cx("is-drawer-close:tooltip is-drawer-close:tooltip-right", {
+                        "menu-active": path == m.href,
+                        "menu-active-2": startsWith(path, m.href)
+                    })}
                        data-tip={m.name} href={m.href}>
                         {m.icon()}
                         <span className="is-drawer-close:hidden">{m.name}</span>
@@ -68,7 +74,10 @@ export const MainMenu = () => {
 
             {map(menus.General, m => (
                 <li>
-                    <a className={cx("is-drawer-close:tooltip is-drawer-close:tooltip-right", {"menu-active": path == m.href, "menu-active-2": startsWith(path, m.href)})}
+                    <a className={cx("is-drawer-close:tooltip is-drawer-close:tooltip-right", {
+                        "menu-active": path == m.href,
+                        "menu-active-2": startsWith(path, m.href)
+                    })}
                        data-tip={m.name} href={m.href}>
                         {m.icon()}
                         <span className="is-drawer-close:hidden">{m.name}</span>

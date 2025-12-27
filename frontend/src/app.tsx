@@ -1,11 +1,11 @@
-import './App.css'
 import {useState} from "preact/hooks";
 import {EventHandler, h, TargetedEvent} from 'preact';
 import {Containers} from './pages/Containers';
 import {Volumes} from "./pages/Volumes";
 import {Images} from "./pages/Images";
-import {LocationProvider, Router, Route} from "preact-iso";
+import {ErrorBoundary, LocationProvider, Route, Router} from "preact-iso";
 import {MainMenu} from "./components/MainMenu";
+import {NoContent} from "./components/NoContent";
 
 export function App(props: any) {
     const [isDrawerOpen, setDrawerState] = useState(true);
@@ -23,12 +23,14 @@ export function App(props: any) {
                 {/* Layout Content */}
                 <div className="drawer-content h-dvh grid grid-cols-[max-content_auto]">
 
-                    <Router>
-                        <Containers default path="/containers/:id/*"/>
-                        <Volumes path="/volumes/:id/*"/>
-                        <Images path="/images/:id/*"/>
-                        {/*<Route default component={() => (<h1>No select</h1>)} />*/}
-                    </Router>
+                    <ErrorBoundary onError={(e) => console.error(e)}>
+                        <Router>
+                            <Containers path="/containers/:id/*"/>
+                            <Route component={Volumes} path="/volumes/:id/*" />
+                            <Route component={Images} path="/images/:id/*" />
+                            <Route component={NoContent} default />
+                        </Router>
+                    </ErrorBoundary>
 
                 </div>
 
@@ -50,7 +52,7 @@ export function App(props: any) {
                             </label>
                         </div>
 
-                        <MainMenu />
+                        <MainMenu/>
                     </div>
                 </div>
             </div>

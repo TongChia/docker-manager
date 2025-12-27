@@ -7,6 +7,7 @@ import {Route, Router} from "preact-iso";
 import {grouped, is$Compose, is$Container, listen, running, state, update} from "../states/Container";
 import {ContainerDropdown, ContainerItem} from "../components/ContainerMenu";
 import {cx} from "../utils/classnames";
+import {NoContent} from "../components/NoContent";
 
 export function Containers(props: any) {
     const containers = grouped.value
@@ -54,11 +55,7 @@ export function Containers(props: any) {
                 <div className="p-4 overflow-y-auto grow">
                     <Router>
                         <Route component={ContainerInfo} path="/info"/>
-                        <Route default component={() => (
-                            <div>
-                                <h1>No Content</h1>
-                            </div>)
-                        }/>
+                        <Route default component={NoContent}/>
                     </Router>
                 </div>
             </div>

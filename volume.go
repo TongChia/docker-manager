@@ -5,9 +5,7 @@ import (
 	"github.com/moby/moby/client"
 )
 
-type Volume = volume.Volume
-
-func (a *App) VolumeList() ([]Volume, error) {
+func (a *App) VolumeList() ([]volume.Volume, error) {
 	volumes, err := a.cli.VolumeList(a.ctx, client.VolumeListOptions{})
 	if err != nil {
 		a.log.Error("Failed to list volumes: " + err.Error())

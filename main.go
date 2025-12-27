@@ -17,17 +17,27 @@ func main() {
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
 		},
+		Mac: application.MacOptions{
+			ApplicationShouldTerminateAfterLastWindowClosed: true,
+		},
 	})
 
 	app.Window.NewWithOptions(application.WebviewWindowOptions{
-		Title:            "Docker Manager",
-		Width:            1024,
-		Height:           768,
-		MinWidth:         768,
-		MinHeight:        384,
-		BackgroundColour: application.NewRGBA(27, 38, 54, 1),
+		Title:     "Docker Manager",
+		Width:     1024,
+		Height:    768,
+		MinWidth:  768,
+		MinHeight: 384,
+
+		BackgroundType: application.BackgroundTypeTransparent,
+		//BackgroundColour: application.NewRGBA(27, 38, 54, 1),
+		BackgroundColour: application.NewRGBA(27, 38, 54, 0),
 		Mac: application.MacWindow{
+			Backdrop: application.MacBackdropTranslucent,
 			TitleBar: application.MacTitleBarHiddenInset,
+		},
+		Linux: application.LinuxWindow{
+			WindowIsTranslucent: true,
 		},
 	})
 
