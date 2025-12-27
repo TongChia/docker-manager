@@ -1,4 +1,4 @@
-import {container} from "../../wailsjs/go/models";
+import * as container from "../../bindings/github.com/moby/moby/api/types/container";
 import {some} from "lodash";
 
 export const isK8s = ({Labels}: container.Summary) => some(Labels, (v, k) => k == 'io.kubernetes.pod.name');
