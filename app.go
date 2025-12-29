@@ -24,7 +24,7 @@ type App struct {
 func NewApp(app *application.App) *App {
 	return &App{
 		app: app,
-		log: slog.Default(),
+		log: app.Logger.WithGroup("App"),
 		bus: ro.NewPublishSubject[events.Message](),
 	}
 }

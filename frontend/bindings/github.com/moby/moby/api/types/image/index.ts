@@ -4,7 +4,10 @@
 export {
     AttestationProperties,
     ImageProperties,
+    InspectResponse,
     ManifestKind,
     ManifestSummary,
+    Metadata,
+    RootFS,
     Summary
 } from "./models.js";

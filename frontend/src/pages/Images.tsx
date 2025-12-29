@@ -1,51 +1,49 @@
-import * as image from "../../bindings/github.com/moby/moby/api/types/image";
-import {useEffect, useState} from "preact/hooks";
-import {h, Fragment} from 'preact';
-import {ImageList} from "../../bindings/docker-manager/app";
-import {running} from "../states/Container";
-import {find, head, map} from "lodash";
+import {useEffect} from "preact/hooks";
+import {Fragment, h} from 'preact';
+import * as container from "../states/container";
+import {map} from "lodash";
 import {cx} from "../utils/classnames";
 import {VolumeFillIcon} from "../components/icons";
 import {DeleteBtn, PlusBtn, ShareBtn} from "../components/buttons";
 import {Route, Router} from "preact-iso";
 import {NoContent} from "../components/NoContent";
-import {formatSize} from "../utils/docker";
-
+import {listen, state, total, update} from "../states/image";
+import {ImageInfo} from "./ImageInfo";
 
 export function Images(props: any) {
-    const [images, setImages] = useState<Array<image.Summary>>([]);
-    const updateImages = (list: Array<image.Summary>) => setImages(list);
-    const selected = find(images, {Id: props.id})
+    const images = state.value
+    // const selected = find(images, {Id: props.id})
 
     useEffect(() => {
-        ImageList().then(updateImages);
+        container.update().then(() => update()).catch(console.error)
+        return listen()
     }, []);
 
     return (
-
-        <>
+        <div className="drawer-content h-dvh grid grid-cols-[max-content_auto]">
             <div className="flex flex-col content-normal w-90 h-dvh">
                 {/* Navbar */}
                 <nav className="navbar w-full bg-base-300 grow-0 flex justify-between">
                     <div className="px-4">
                         <p className="font-bold">Volumes</p>
-                        <p className="text-xs text-base-content/50">{running.value || "None"} running</p>
+                        <p className="text-xs text-base-content/50">{total.value} total</p>
                     </div>
                 </nav>
                 {/* Page content here */}
                 <div className="flex-1 h-full bg-base-200 overflow-y-scroll">
-                    <ul className="menu my-menu w-full">
+                    <ul className="menu my-menu image-menu w-full">
                         {map(images, item => (
-                            <li className={""}>
-                                <span className={cx("grid-cols-[auto_max-content]", {"menu-active": item.Id == props.id})}>
+                            <li className={cx({"disabled": item.unused})}>
+                                <span
+                                    className={cx("grid-cols-[auto_max-content]", {"menu-active": item.Id == props.id})}>
                                     <a className="grid grid-cols-[min-content_auto] gap-2 items-center h-12"
                                        href={`/images/${item.Id}/info`}>
-                                        <span className="icon  fill-info">
-                                            <VolumeFillIcon className="w-8 h-8"/>
+                                        <span className="icon fill-info">
+                                            <VolumeFillIcon className="w-6 h-6"/>
                                         </span>
                                         <div className="truncate text-nowrap">
-                                            <p className="overflow-hidden text-ellipsis">{head(item.RepoTags) || item.Id}</p>
-                                            <p className="overflow-hidden text-ellipsis text-current/50">{formatSize(item.Size)}</p>
+                                            <p className="overflow-hidden text-ellipsis">{item.name}</p>
+                                            <p className="overflow-hidden text-ellipsis text-xs text-current/50">{[item.size, item.distance].join(', ')}</p>
                                         </div>
                                     </a>
                                     <span>
@@ -73,12 +71,12 @@ export function Images(props: any) {
 
                 <div className="p-4 overflow-y-auto grow">
                     <Router>
-                        <Route path="/info" component={NoContent}/>
+                        <Route path="/info" component={ImageInfo}/>
                         <Route path="/files" component={NoContent}/>
                         <Route default component={NoContent}/>
                     </Router>
                 </div>
             </div>
-        </>
+        </div>
     )
 }

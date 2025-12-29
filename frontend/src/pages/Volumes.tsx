@@ -1,51 +1,47 @@
-import {VolumeList} from "../../bindings/docker-manager/app";
-import * as volume from "../../bindings/github.com/moby/moby/api/types/volume";
-import {useEffect, useState} from "preact/hooks";
+import {useEffect} from "preact/hooks";
 import {Fragment, h} from 'preact';
-import {running} from "../states/Container";
 import {DeleteBtn, PlusBtn, ShareBtn} from "../components/buttons";
 import {find, map} from "lodash";
 import {cx} from "../utils/classnames";
-import {Route, RoutePropsForPath, RoutableProps, Router} from "preact-iso";
+import {Route, RoutePropsForPath, Router} from "preact-iso";
 import {NoContent} from "../components/NoContent";
 import {VolumeFillIcon} from "../components/icons";
 import {VolumeInfo} from "./VolumeInfo";
-
+import {state, update} from "../states/volume"
 
 export function Volumes(props: RoutePropsForPath<"/:id/*">) {
-    const [volumes, setVolumes] = useState<Array<volume.Volume>>([]);
-    const updateVolumes = (list: Array<volume.Volume>) => setVolumes(list);
-    const selected = find(volumes, {Name: props.id})
+    const {items, TotalCount, totalSize} = state.value || {items: [], totalSize: 0, TotalCount: 0}
+    const selected = find(items, {Name: props.id})
 
     useEffect(() => {
-        VolumeList().then(updateVolumes);
+        update().catch(console.error)
     }, []);
 
 
     return (
-        <>
+        <div className="drawer-content h-dvh grid grid-cols-[max-content_auto]">
             <div className="flex flex-col content-normal w-90 h-dvh">
                 {/* Navbar */}
                 <nav className="navbar w-full bg-base-300 grow-0 flex justify-between">
                     <div className="px-4">
                         <p className="font-bold">Volumes</p>
-                        <p className="text-xs text-base-content/50">{running.value || "None"} running</p>
+                        <p className="text-xs text-base-content/50">{totalSize} total</p>
                     </div>
                 </nav>
                 {/* Page content here */}
                 <div className="flex-1 h-full bg-base-200 overflow-y-scroll">
-                    <ul className="menu my-menu w-full">
-                        {map(volumes, item => (
-                            <li className={""}>
+                    <ul className="menu my-menu image-menu w-full">
+                        {map(items, item => (
+                            <li className={cx({"disabled": item.unused})}>
                                 <span className={cx("grid-cols-[auto_max-content]", {"menu-active": item.Name == props.id})}>
                                     <a className="grid grid-cols-[min-content_auto] gap-2 items-center h-12"
                                        href={`/volumes/${item.Name}/info`}>
                                         <span className="icon  fill-info">
-                                            <VolumeFillIcon className="w-8 h-8"/>
+                                            <VolumeFillIcon className="w-6 h-6"/>
                                         </span>
                                         <div className="truncate text-nowrap">
                                             <p className="overflow-hidden text-ellipsis">{item.Name}</p>
-                                            <p className="overflow-hidden text-ellipsis text-current/50">{item.CreatedAt}</p>
+                                            <p className="overflow-hidden text-ellipsis text-xs text-current/50">{item.size}</p>
                                         </div>
                                     </a>
                                     <span>
@@ -79,6 +75,6 @@ export function Volumes(props: RoutePropsForPath<"/:id/*">) {
                     </Router>
                 </div>
             </div>
-        </>
+        </div>
     )
 }

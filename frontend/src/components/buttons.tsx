@@ -1,6 +1,6 @@
 import {ButtonHTMLAttributes, h} from "preact";
 import {cx} from "../utils/classnames";
-import {$Summary} from "../states/Container";
+import {$Summary} from "../states/container";
 
 export const PlayBtn = ({state, ...rest}: { state: $Summary["state"] } & ButtonHTMLAttributes) => (
     <button className={cx("btn btn-ghost btn-xs btn-square fill-current text-current", {"btn-disabled": state == "loading"})} {...rest}>

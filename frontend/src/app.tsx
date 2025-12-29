@@ -1,17 +1,17 @@
-import {useState} from "preact/hooks";
 import {EventHandler, h, TargetedEvent} from 'preact';
 import {Containers} from './pages/Containers';
 import {Volumes} from "./pages/Volumes";
 import {Images} from "./pages/Images";
 import {ErrorBoundary, LocationProvider, Route, Router} from "preact-iso";
 import {MainMenu} from "./components/MainMenu";
-import {NoContent} from "./components/NoContent";
+import {DefaultPage} from "./pages/DefaultPage";
+import {Networks} from "./pages/Networks";
 
 export function App(props: any) {
-    const [isDrawerOpen, setDrawerState] = useState(true);
+    // const [isDrawerOpen, setDrawerState] = useState(true);
 
     const onDrawerChange: EventHandler<TargetedEvent<HTMLInputElement>> = (event) => {
-        setDrawerState(event.currentTarget?.checked || false)
+        // setDrawerState(event.currentTarget?.checked || false)
     }
 
     return (
@@ -21,18 +21,18 @@ export function App(props: any) {
                        onChange={onDrawerChange}/>
 
                 {/* Layout Content */}
-                <div className="drawer-content h-dvh grid grid-cols-[max-content_auto]">
-
-                    <ErrorBoundary onError={(e) => console.error(e)}>
-                        <Router>
-                            <Containers path="/containers/:id/*"/>
-                            <Route component={Volumes} path="/volumes/:id/*" />
-                            <Route component={Images} path="/images/:id/*" />
-                            <Route component={NoContent} default />
-                        </Router>
-                    </ErrorBoundary>
-
-                </div>
+                <ErrorBoundary onError={(e) => {
+                    console.error("ErrorBoundary: ", e);
+                    window.location.replace('/')
+                }}>
+                    <Router>
+                        <Route component={Containers} path="/containers/:id/*"/>
+                        <Route component={Volumes} path="/volumes/:id/*"/>
+                        <Route component={Images} path="/images/:id/*"/>
+                        <Route component={Networks} path="/networks/:id/*"/>
+                        <Route component={DefaultPage} default/>
+                    </Router>
+                </ErrorBoundary>
 
                 {/* Layout Sidebar */}
                 <div className="drawer-side h-dvh is-drawer-close:overflow-visible">

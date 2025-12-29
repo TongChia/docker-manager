@@ -16,3 +16,11 @@ import { Create as $Create } from "@wailsio/runtime";
  * Addr{} is distinct from both 0.0.0.0 and ::.
  */
 export type Addr = string;
+
+/**
+ * Prefix is an IP address prefix (CIDR) representing an IP network.
+ * 
+ * The first [Prefix.Bits]() of [Addr]() are specified. The remaining bits match any address.
+ * The range of Bits() is [0,32] for IPv4 or [0,128] for IPv6.
+ */
+export type Prefix = string;

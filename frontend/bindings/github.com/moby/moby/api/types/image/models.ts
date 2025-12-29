@@ -7,10 +7,19 @@ import { Create as $Create } from "@wailsio/runtime";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: Unused imports
+import * as v1$1 from "../../../../docker-image-spec/specs-go/v1/models.js";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
+import * as storage$0 from "../storage/models.js";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
 import * as digest$0 from "../../../../../opencontainers/go-digest/models.js";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: Unused imports
 import * as v1$0 from "../../../../../opencontainers/image-spec/specs-go/v1/models.js";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
+import * as time$0 from "../../../../../../time/models.js";
 
 export class AttestationProperties {
     /**
@@ -82,6 +91,208 @@ export class ImageProperties {
             $$parsedSource["Containers"] = $$createField2_0($$parsedSource["Containers"]);
         }
         return new ImageProperties($$parsedSource as Partial<ImageProperties>);
+    }
+}
+
+/**
+ * InspectResponse contains response of Engine API:
+ * GET "/images/{name:.*}/json"
+ */
+export class InspectResponse {
+    /**
+     * ID is the content-addressable ID of an image.
+     * 
+     * This identifier is a content-addressable digest calculated from the
+     * image's configuration (which includes the digests of layers used by
+     * the image).
+     * 
+     * Note that this digest differs from the `RepoDigests` below, which
+     * holds digests of image manifests that reference the image.
+     */
+    "Id": string;
+
+    /**
+     * RepoTags is a list of image names/tags in the local image cache that
+     * reference this image.
+     * 
+     * Multiple image tags can refer to the same image, and this list may be
+     * empty if no tags reference the image, in which case the image is
+     * "untagged", in which case it can still be referenced by its ID.
+     */
+    "RepoTags": string[];
+
+    /**
+     * RepoDigests is a list of content-addressable digests of locally available
+     * image manifests that the image is referenced from. Multiple manifests can
+     * refer to the same image.
+     * 
+     * These digests are usually only available if the image was either pulled
+     * from a registry, or if the image was pushed to a registry, which is when
+     * the manifest is generated and its digest calculated.
+     */
+    "RepoDigests": string[];
+
+    /**
+     * Comment is an optional message that can be set when committing or
+     * importing the image. This field is omitted if not set.
+     */
+    "Comment"?: string;
+
+    /**
+     * Created is the date and time at which the image was created, formatted in
+     * RFC 3339 nano-seconds (time.RFC3339Nano).
+     * 
+     * This information is only available if present in the image,
+     * and omitted otherwise.
+     */
+    "Created"?: string;
+
+    /**
+     * Author is the name of the author that was specified when committing the
+     * image, or as specified through MAINTAINER (deprecated) in the Dockerfile.
+     * This field is omitted if not set.
+     */
+    "Author"?: string;
+    "Config": v1$1.DockerOCIImageConfig | null;
+
+    /**
+     * Architecture is the hardware CPU architecture that the image runs on.
+     */
+    "Architecture": string;
+
+    /**
+     * Variant is the CPU architecture variant (presently ARM-only).
+     */
+    "Variant"?: string;
+
+    /**
+     * OS is the Operating System the image is built to run on.
+     */
+    "Os": string;
+
+    /**
+     * OsVersion is the version of the Operating System the image is built to
+     * run on (especially for Windows).
+     */
+    "OsVersion"?: string;
+
+    /**
+     * Size is the total size of the image including all layers it is composed of.
+     */
+    "Size": number;
+
+    /**
+     * GraphDriver holds information about the storage driver used to store the
+     * container's and image's filesystem.
+     */
+    "GraphDriver"?: storage$0.DriverData | null;
+
+    /**
+     * RootFS contains information about the image's RootFS, including the
+     * layer IDs.
+     */
+    "RootFS": RootFS;
+
+    /**
+     * Metadata of the image in the local cache.
+     * 
+     * This information is local to the daemon, and not part of the image itself.
+     */
+    "Metadata": Metadata;
+
+    /**
+     * Descriptor is the OCI descriptor of the image target.
+     * It's only set if the daemon provides a multi-platform image store.
+     * 
+     * WARNING: This is experimental and may change at any time without any backward
+     * compatibility.
+     */
+    "Descriptor"?: v1$0.Descriptor | null;
+
+    /**
+     * Manifests is a list of image manifests available in this image. It
+     * provides a more detailed view of the platform-specific image manifests or
+     * other image-attached data like build attestations.
+     * 
+     * Only available if the daemon provides a multi-platform image store, the client
+     * requests manifests AND does not request a specific platform.
+     * 
+     * WARNING: This is experimental and may change at any time without any backward
+     * compatibility.
+     */
+    "Manifests"?: ManifestSummary[];
+
+    /** Creates a new InspectResponse instance. */
+    constructor($$source: Partial<InspectResponse> = {}) {
+        if (!("Id" in $$source)) {
+            this["Id"] = "";
+        }
+        if (!("RepoTags" in $$source)) {
+            this["RepoTags"] = [];
+        }
+        if (!("RepoDigests" in $$source)) {
+            this["RepoDigests"] = [];
+        }
+        if (!("Config" in $$source)) {
+            this["Config"] = null;
+        }
+        if (!("Architecture" in $$source)) {
+            this["Architecture"] = "";
+        }
+        if (!("Os" in $$source)) {
+            this["Os"] = "";
+        }
+        if (!("Size" in $$source)) {
+            this["Size"] = 0;
+        }
+        if (!("RootFS" in $$source)) {
+            this["RootFS"] = (new RootFS());
+        }
+        if (!("Metadata" in $$source)) {
+            this["Metadata"] = (new Metadata());
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new InspectResponse instance from a string or object.
+     */
+    static createFrom($$source: any = {}): InspectResponse {
+        const $$createField1_0 = $$createType1;
+        const $$createField2_0 = $$createType1;
+        const $$createField6_0 = $$createType3;
+        const $$createField12_0 = $$createType5;
+        const $$createField13_0 = $$createType6;
+        const $$createField14_0 = $$createType7;
+        const $$createField15_0 = $$createType9;
+        const $$createField16_0 = $$createType11;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("RepoTags" in $$parsedSource) {
+            $$parsedSource["RepoTags"] = $$createField1_0($$parsedSource["RepoTags"]);
+        }
+        if ("RepoDigests" in $$parsedSource) {
+            $$parsedSource["RepoDigests"] = $$createField2_0($$parsedSource["RepoDigests"]);
+        }
+        if ("Config" in $$parsedSource) {
+            $$parsedSource["Config"] = $$createField6_0($$parsedSource["Config"]);
+        }
+        if ("GraphDriver" in $$parsedSource) {
+            $$parsedSource["GraphDriver"] = $$createField12_0($$parsedSource["GraphDriver"]);
+        }
+        if ("RootFS" in $$parsedSource) {
+            $$parsedSource["RootFS"] = $$createField13_0($$parsedSource["RootFS"]);
+        }
+        if ("Metadata" in $$parsedSource) {
+            $$parsedSource["Metadata"] = $$createField14_0($$parsedSource["Metadata"]);
+        }
+        if ("Descriptor" in $$parsedSource) {
+            $$parsedSource["Descriptor"] = $$createField15_0($$parsedSource["Descriptor"]);
+        }
+        if ("Manifests" in $$parsedSource) {
+            $$parsedSource["Manifests"] = $$createField16_0($$parsedSource["Manifests"]);
+        }
+        return new InspectResponse($$parsedSource as Partial<InspectResponse>);
     }
 }
 
@@ -170,9 +381,9 @@ export class ManifestSummary {
      * Creates a new ManifestSummary instance from a string or object.
      */
     static createFrom($$source: any = {}): ManifestSummary {
-        const $$createField1_0 = $$createType2;
-        const $$createField5_0 = $$createType4;
-        const $$createField6_0 = $$createType6;
+        const $$createField1_0 = $$createType8;
+        const $$createField5_0 = $$createType13;
+        const $$createField6_0 = $$createType15;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("Descriptor" in $$parsedSource) {
             $$parsedSource["Descriptor"] = $$createField1_0($$parsedSource["Descriptor"]);
@@ -184,6 +395,56 @@ export class ManifestSummary {
             $$parsedSource["AttestationData"] = $$createField6_0($$parsedSource["AttestationData"]);
         }
         return new ManifestSummary($$parsedSource as Partial<ManifestSummary>);
+    }
+}
+
+/**
+ * Metadata contains engine-local data about the image.
+ */
+export class Metadata {
+    /**
+     * LastTagTime is the date and time at which the image was last tagged.
+     */
+    "LastTagTime"?: time$0.Time;
+
+    /** Creates a new Metadata instance. */
+    constructor($$source: Partial<Metadata> = {}) {
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new Metadata instance from a string or object.
+     */
+    static createFrom($$source: any = {}): Metadata {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new Metadata($$parsedSource as Partial<Metadata>);
+    }
+}
+
+/**
+ * RootFS returns Image's RootFS description including the layer IDs.
+ */
+export class RootFS {
+    "Type"?: string;
+    "Layers"?: string[];
+
+    /** Creates a new RootFS instance. */
+    constructor($$source: Partial<RootFS> = {}) {
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new RootFS instance from a string or object.
+     */
+    static createFrom($$source: any = {}): RootFS {
+        const $$createField1_0 = $$createType1;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("Layers" in $$parsedSource) {
+            $$parsedSource["Layers"] = $$createField1_0($$parsedSource["Layers"]);
+        }
+        return new RootFS($$parsedSource as Partial<RootFS>);
     }
 }
 
@@ -337,9 +598,9 @@ export class Summary {
      * Creates a new Summary instance from a string or object.
      */
     static createFrom($$source: any = {}): Summary {
-        const $$createField3_0 = $$createType7;
-        const $$createField5_0 = $$createType8;
-        const $$createField6_0 = $$createType10;
+        const $$createField3_0 = $$createType16;
+        const $$createField5_0 = $$createType9;
+        const $$createField6_0 = $$createType11;
         const $$createField7_0 = $$createType1;
         const $$createField8_0 = $$createType1;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
@@ -365,12 +626,18 @@ export class Summary {
 // Private type creation functions
 const $$createType0 = v1$0.Platform.createFrom;
 const $$createType1 = $Create.Array($Create.Any);
-const $$createType2 = v1$0.Descriptor.createFrom;
-const $$createType3 = ImageProperties.createFrom;
-const $$createType4 = $Create.Nullable($$createType3);
-const $$createType5 = AttestationProperties.createFrom;
-const $$createType6 = $Create.Nullable($$createType5);
-const $$createType7 = $Create.Map($Create.Any, $Create.Any);
-const $$createType8 = $Create.Nullable($$createType2);
-const $$createType9 = ManifestSummary.createFrom;
-const $$createType10 = $Create.Array($$createType9);
+const $$createType2 = v1$1.DockerOCIImageConfig.createFrom;
+const $$createType3 = $Create.Nullable($$createType2);
+const $$createType4 = storage$0.DriverData.createFrom;
+const $$createType5 = $Create.Nullable($$createType4);
+const $$createType6 = RootFS.createFrom;
+const $$createType7 = Metadata.createFrom;
+const $$createType8 = v1$0.Descriptor.createFrom;
+const $$createType9 = $Create.Nullable($$createType8);
+const $$createType10 = ManifestSummary.createFrom;
+const $$createType11 = $Create.Array($$createType10);
+const $$createType12 = ImageProperties.createFrom;
+const $$createType13 = $Create.Nullable($$createType12);
+const $$createType14 = AttestationProperties.createFrom;
+const $$createType15 = $Create.Nullable($$createType14);
+const $$createType16 = $Create.Map($Create.Any, $Create.Any);

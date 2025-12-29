@@ -1,33 +1,21 @@
 import {CopyText} from "../components/CopyText";
 import * as volume from "../../bindings/github.com/moby/moby/api/types/volume";
-import {h, Fragment} from "preact";
-import {isEmpty} from "lodash";
-import {LabelsTable} from "../components/LabelsTable";
+import {Fragment, h} from "preact";
+import {KVTable, PropTable} from "../components/PropTable";
+import {$Volume} from "../states/volume";
 
 
-export const VolumeInfo = ({data}: {data: volume.Volume}) => {
+export const VolumeInfo = ({data}: { data: $Volume }) => {
     console.debug({volume: data})
     return (
-        <>
-            <div className="overflow-x-auto rounded-box border border-base-content/20">
-                <table className="table table-sm table-fixed truncate text-nowrap">
-                    <tbody>
-                    <tr>
-                        <th className="text-nowrap w-2/12">Name</th>
-                        <td className="w-10/12"><CopyText text={data.Name} right/></td>
-                    </tr>
-                    <tr>
-                        <th>Mount point</th>
-                        <td><CopyText text={data.Mountpoint} right/></td>
-                    </tr>
-                    <tr>
-                        <th>Created</th>
-                        <td className="text-right overflow-hidden text-ellipsis">{data.CreatedAt}</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-            {isEmpty(data.Labels) ? "" : <LabelsTable Labels={data.Labels} />}
-        </>
+        <div className="flex flex-col gap-4">
+            <KVTable data={[
+                {key: "Name", value: data.Name, copyable: true},
+                {key: "Mount point", value: data.Mountpoint, copyable: true},
+                {key: "Created", value: data.created},
+                {key: "Size", value: data.size},
+            ]} />
+            <PropTable title="Labels" data={data.Labels}/>
+        </div>
     )
 }

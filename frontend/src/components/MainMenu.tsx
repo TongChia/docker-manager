@@ -16,7 +16,7 @@ import {cx} from "../utils/classnames";
 export const MainMenu = () => {
     const {path, route} = useLocation()
 
-    console.debug("main menu", {path, route})
+    // console.debug("main menu", {path, route})
 
     const menus = {
         "Docker": [

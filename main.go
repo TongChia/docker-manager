@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"log/slog"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
@@ -20,6 +21,7 @@ func main() {
 		Mac: application.MacOptions{
 			ApplicationShouldTerminateAfterLastWindowClosed: true,
 		},
+		LogLevel: slog.LevelDebug,
 	})
 
 	app.Window.NewWithOptions(application.WebviewWindowOptions{

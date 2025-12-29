@@ -21,7 +21,10 @@ import * as events$0 from "../github.com/moby/moby/api/types/events/models.js";
 import * as image$0 from "../github.com/moby/moby/api/types/image/models.js";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: Unused imports
-import * as volume$0 from "../github.com/moby/moby/api/types/volume/models.js";
+import * as network$0 from "../github.com/moby/moby/api/types/network/models.js";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
+import * as client$0 from "../github.com/moby/moby/client/models.js";
 
 /**
  * ContainerById 容器
@@ -57,9 +60,25 @@ export function Greet(name: string): $CancellablePromise<events$0.Message | null
     });
 }
 
+export function ImageFiles(id: string): $CancellablePromise<void> {
+    return $Call.ByID(1653876261, id);
+}
+
 export function ImageList(): $CancellablePromise<image$0.Summary[]> {
     return $Call.ByID(3060495310).then(($result: any) => {
         return $$createType6($result);
+    });
+}
+
+export function ImageOne(id: string): $CancellablePromise<image$0.InspectResponse | null> {
+    return $Call.ByID(3196724138, id).then(($result: any) => {
+        return $$createType8($result);
+    });
+}
+
+export function NetworkList(): $CancellablePromise<network$0.Summary[]> {
+    return $Call.ByID(1026609385).then(($result: any) => {
+        return $$createType10($result);
     });
 }
 
@@ -75,9 +94,9 @@ export function StopContainer(containerIds: string[]): $CancellablePromise<void>
     return $Call.ByID(2591150016, containerIds);
 }
 
-export function VolumeList(): $CancellablePromise<volume$0.Volume[]> {
+export function VolumeList(): $CancellablePromise<client$0.VolumesDiskUsage | null> {
     return $Call.ByID(162536207).then(($result: any) => {
-        return $$createType8($result);
+        return $$createType12($result);
     });
 }
 
@@ -89,5 +108,9 @@ const $$createType3 = events$0.Message.createFrom;
 const $$createType4 = $Create.Nullable($$createType3);
 const $$createType5 = image$0.Summary.createFrom;
 const $$createType6 = $Create.Array($$createType5);
-const $$createType7 = volume$0.Volume.createFrom;
-const $$createType8 = $Create.Array($$createType7);
+const $$createType7 = image$0.InspectResponse.createFrom;
+const $$createType8 = $Create.Nullable($$createType7);
+const $$createType9 = network$0.Summary.createFrom;
+const $$createType10 = $Create.Array($$createType9);
+const $$createType11 = client$0.VolumesDiskUsage.createFrom;
+const $$createType12 = $Create.Nullable($$createType11);

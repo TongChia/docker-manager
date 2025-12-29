@@ -54,7 +54,7 @@ body {
 }
 
 /* Custom menu */
-.menu.my-menu {
+.menu.container-menu {
     :where(li > details > summary) {
         &:after {
             display: none;
@@ -84,14 +84,25 @@ body {
         padding-left: 12px;
     }
 
-    & > li.stopped {
+    & > li.disabled {
+        &:not(.disabled ~ .disabled) {
+            &:before {
+                display: block;
+                padding: 24px 24px 0;
+                font-size: small;
+                font-weight: bold;
+                color: color-mix(in oklab, var(--color-base-content) 20%, transparent);
+                content: "Stopped";
+            }
+        }
+    }
+}
+
+.menu.image-menu {
+    & > li.disabled {
         /*opacity: 50%;*/
         /*color: var(--color-base-content) 10%;*/
         color: color-mix(in oklab, var(--color-base-content) 50%, transparent);
-
-        .icon {
-            /*opacity: 70%;*/
-        }
 
         .menu-active {
             /*background-color: color-mix(in oklab, var(--menu-active-bg) 60%, transparent);*/
@@ -99,29 +110,36 @@ body {
             background-color: color-mix(in oklab, var(--color-primary) 60%, transparent);
         }
 
-        &:not(.stopped ~ .stopped) {
+        &:not(.disabled ~ .disabled) {
             &:before {
                 display: block;
-                padding: 24px 24px 0;
+                padding: 24px 18px 0;
                 font-size: small;
                 font-weight: bold;
-                /*color: var(--color-base-content);*/
-                content: "Stopped";
+                color: color-mix(in oklab, var(--color-base-content) 20%, transparent);
+                content: "Unused";
             }
         }
     }
+}
 
+.menu.my-menu {
+    & > li.disabled {
+        color: color-mix(in oklab, var(--color-base-content) 50%, transparent);
+
+        .menu-active {
+            color: color-mix(in oklab, var(--color-primary-content) 80%, transparent);
+            background-color: color-mix(in oklab, var(--color-primary) 60%, transparent);
+        }
+    }
 
     fill: var(--color-info);
 
     .menu-active {
         :where(:not(ul, details, .menu-title, .btn))& {
-            /*color: var(--menu-active-fg);*/
             color: var(--color-primary-content);
             fill: var(--color-primary-content);
             background-color: var(--color-primary);
-
-            /*background-color: color-mix(in oklab, var(--menu-active-bg) 80%, transparent);*/
         }
     }
 }

@@ -1,16 +1,19 @@
 package main
 
 import (
-	"github.com/moby/moby/api/types/volume"
 	"github.com/moby/moby/client"
 )
 
-func (a *App) VolumeList() ([]volume.Volume, error) {
-	volumes, err := a.cli.VolumeList(a.ctx, client.VolumeListOptions{})
+func (a *App) VolumeList() (*client.VolumesDiskUsage, error) {
+	usages, err := a.cli.DiskUsage(a.ctx, client.DiskUsageOptions{
+		Volumes: true,
+		Verbose: true,
+	})
 	if err != nil {
-		a.log.Error("Failed to list volumes: " + err.Error())
 		return nil, err
 	}
 
-	return volumes.Items, nil
+	a.log.Debug("got volumes disk", "usages", usages.Volumes)
+
+	return &usages.Volumes, nil
 }

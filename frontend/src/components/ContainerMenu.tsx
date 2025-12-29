@@ -1,6 +1,6 @@
 import {h} from "preact";
 import type {EventHandler, TargetedEvent} from "preact";
-import {$Compose, $Container, execStartOrStop} from "../states/Container"
+import {$Compose, $Container, execStartOrStop} from "../states/container"
 import {get, map} from "lodash";
 import {DeleteBtn, PlayBtn} from "./buttons";
 import {useState} from "preact/hooks";
@@ -21,7 +21,7 @@ export const ContainerDropdown = ({data}: { data: $Compose }) => {
     }
 
     return (
-        <li className={cx({"stopped": isStop})}>
+        <li className={cx({"disabled": isStop})}>
             <details open={open} onToggle={(event) => setOpen(get(event.target, 'open', false))}>
                 <summary onDblClick={() => setOpen(!open)} className={cx({"menu-active": isSelected})}>
                     <a className="grid grid-cols-[min-content_auto] gap-2 items-center h-12"
@@ -52,7 +52,7 @@ export const ContainerItem = ({data}: { data: $Container }) => {
     }
 
     return (
-        <li className={cx({"stopped": isStop})}>
+        <li className={cx({"disabled": isStop})}>
             <span className={cx("grid-cols-[auto_max-content]", {"menu-active": isSelected})}>
             <a className="grid grid-cols-[min-content_auto] gap-2 items-center h-12"
                href={`/containers/${data.id}/info`}>

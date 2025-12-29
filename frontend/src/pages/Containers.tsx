@@ -4,7 +4,7 @@ import {PlusBtn, SearchBtn, ShareBtn} from "../components/buttons";
 import {map} from "lodash";
 import {ContainerInfo} from "./ContainerInfo";
 import {Route, Router} from "preact-iso";
-import {grouped, is$Compose, is$Container, listen, running, state, update} from "../states/Container";
+import {grouped, is$Compose, is$Container, listen, running, state, update} from "../states/container";
 import {ContainerDropdown, ContainerItem} from "../components/ContainerMenu";
 import {cx} from "../utils/classnames";
 import {NoContent} from "../components/NoContent";
@@ -18,7 +18,7 @@ export function Containers(props: any) {
     }, []);
 
     return (
-        <>
+        <div className="drawer-content h-dvh grid grid-cols-[max-content_auto]">
             <div className="flex flex-col content-normal w-90 h-dvh">
                 {/* Navbar */}
                 <nav className="navbar w-full bg-base-300 grow-0 flex justify-between">
@@ -30,7 +30,7 @@ export function Containers(props: any) {
                 </nav>
                 {/* Page content here */}
                 <div className="flex-1 h-full bg-base-200 overflow-y-scroll">
-                    <ul className="menu my-menu w-full">
+                    <ul className="menu my-menu container-menu w-full">
                         {map(containers, item =>
                             is$Container(item) ? <ContainerItem key={item.id} data={item}/> :
                                 is$Compose(item) ? <ContainerDropdown key={item.id} data={item}/> : ""
@@ -59,6 +59,6 @@ export function Containers(props: any) {
                     </Router>
                 </div>
             </div>
-        </>
+        </div>
     )
 }

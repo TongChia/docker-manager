@@ -14,3 +14,17 @@ func (a *App) ImageList() ([]image.Summary, error) {
 
 	return images.Items, nil
 }
+
+func (a *App) ImageOne(id string) (*image.InspectResponse, error) {
+	r, err := a.cli.ImageInspect(a.ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return &r.InspectResponse, nil
+}
+
+func (a *App) ImageFiles(id string) (err error) {
+
+	return err
+}
