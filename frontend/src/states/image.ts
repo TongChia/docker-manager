@@ -1,16 +1,16 @@
-import {computed, signal, Signal} from "@preact/signals";
+import {batch, signal, Signal} from "@preact/signals";
 import {Summary} from "../../bindings/github.com/moby/moby/api/types/image";
 import {ImageList} from "../../bindings/docker-manager/app";
 import {Events} from "@wailsio/runtime";
 import {WailsEvent} from "@wailsio/runtime/types/events";
 import * as events from "../../bindings/github.com/moby/moby/api/types/events";
-import {assign, head, map, reduce, sortBy, split} from "lodash";
-import {formatSize, formatUnixTime, shortId} from "../utils/docker";
-import { formatDistanceToNowStrict, format } from "date-fns";
-import {grouped} from "./container";
+import {assign, head, map, sortBy, split} from "lodash";
+import {formatSize, shortId} from "../utils/docker";
+import {format, formatDistanceToNowStrict} from "date-fns";
 
 
 export const state: Signal<$Image[]> = signal([])
+export const total: Signal<string> = signal(formatSize(0))
 
 export interface $Image extends Summary {
     id: string
@@ -19,6 +19,7 @@ export interface $Image extends Summary {
     unused: boolean
     distance: string
     tag?: string
+
     get name(): string
 }
 
@@ -38,9 +39,12 @@ const to$Image = (item: Summary): $Image => assign(item, {
 })
 
 // TODO: image repo logo
-export const update = () => ImageList().then(list => {
+export const update = () => ImageList().then(result => {
     _now = Date.now() / 1000
-    state.value = sortBy(map(list, to$Image), ["unused", "fromNow"])
+    batch(() => {
+        state.value = sortBy(map(result?.Items, to$Image), ["unused", "fromNow"])
+        total.value = formatSize(result?.TotalSize)
+    })
 })
 
 export const listen = () => {
@@ -50,4 +54,4 @@ export const listen = () => {
     })
 }
 
-export const total = computed<string>(() => formatSize(reduce(state.value, (r, item) => r + item.Size, 0)))
+// export const total = computed<string>(() => formatSize(reduce(state.value, (r, item) => r + item.Size, 0)))

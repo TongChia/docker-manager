@@ -1,14 +1,10 @@
-import * as image from "../../bindings/github.com/moby/moby/api/types/image";
-import {useEffect, useState} from "preact/hooks";
-import {h, Fragment} from 'preact';
-import {ImageList} from "../../bindings/docker-manager/app";
-import {find, head, map} from "lodash";
+import {useEffect} from "preact/hooks";
+import {h} from 'preact';
+import {find, map} from "lodash";
 import {cx} from "../utils/classnames";
-import {VolumeFillIcon} from "../components/icons";
 import {DeleteBtn, PlusBtn, ShareBtn} from "../components/buttons";
 import {Route, Router} from "preact-iso";
 import {NoContent} from "../components/NoContent";
-import {formatSize} from "../utils/docker";
 import {state, total, update} from "../states/network";
 import {NetworkInfo} from "./NetworkInfo";
 
@@ -38,7 +34,8 @@ export function Networks(props: any) {
                     <ul className="menu my-menu w-full">
                         {map(networks, item => (
                             <li className={""}>
-                                <span className={cx("grid-cols-[auto_max-content]", {"menu-active": item.Id == props.id})}>
+                                <span
+                                    className={cx("grid-cols-[auto_max-content]", {"menu-active": item.Id == props.id})}>
                                     <a className="grid grid-cols-[min-content_auto] gap-2 items-center h-12"
                                        href={`/networks/${item.Id}/info`}>
                                         <span className="icon  fill-info">

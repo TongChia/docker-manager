@@ -1,10 +1,10 @@
 import {useEffect} from "preact/hooks";
-import {Fragment, h} from 'preact';
+import {h} from 'preact';
 import {PlusBtn, SearchBtn, ShareBtn} from "../components/buttons";
 import {map} from "lodash";
 import {ContainerInfo} from "./ContainerInfo";
 import {Route, Router} from "preact-iso";
-import {grouped, is$Compose, is$Container, listen, running, state, update} from "../states/container";
+import {grouped, is$Compose, is$Container, listen, running, update} from "../states/container";
 import {ContainerDropdown, ContainerItem} from "../components/ContainerMenu";
 import {cx} from "../utils/classnames";
 import {NoContent} from "../components/NoContent";

@@ -22,6 +22,7 @@ import {
     sortBy
 } from "lodash";
 import {WailsEvent} from "@wailsio/runtime/types/events";
+import {PortSummary} from "../../bindings/github.com/moby/moby/api/types/container";
 
 type SummaryType = "Kubernetes" | "Compose" | "Container" | "Pod"
 
@@ -35,22 +36,21 @@ export interface $Summary {
 
 export class $Container extends container.Summary implements $Summary {
     public type: $Summary["type"] = "Container"
+    #state?: $Summary["state"]
 
     constructor(
         source: container.Summary,
         public id: string = source.Id.slice(0, 12),
         public name: string = replace(head(source.Names) || "no_name", "/", ""),
-        public raw: container.Summary = source,
+        public ports: PortSummary[] = map(groupBy(source.Ports, item => `${item.PublicPort}:${item.PrivatePort}/${item.Type}`), head) as PortSummary[],
     ) {
         super(source)
     }
 
-    #state?: $Summary["state"]
-
     get state() {
         if (this.#state)
             return this.#state
-        switch (this.raw.State) {
+        switch (this.State) {
             case "running":
                 return "running"
             case "paused":
@@ -143,8 +143,8 @@ export const execStartOrStop = (Ids: string[], isStop: boolean) => {
 }
 
 export const grouped = computed<$Summary[]>(() => {
-    const groupByType = groupBy(state.value, item => isK8s(item.raw) ? "k8s" : isCompose(item.raw) ? "compose" : "others")
-    const groupByProject = groupBy(get(groupByType, "compose", []), item => get(item.raw.Labels, ["com.docker.compose.project"]))
+    const groupByType = groupBy(state.value, item => isK8s(item) ? "k8s" : isCompose(item) ? "compose" : "others")
+    const groupByProject = groupBy(get(groupByType, "compose", []), item => get(item.Labels, ["com.docker.compose.project"]))
     const projects = map(groupByProject, (items, name) => new $Compose(items, name)) as $Summary[]
     const k8s = groupByType["kubernetes"] ? new $Kubernetes(groupByType["k8s"]) as $Summary : []
     const others = get(groupByType, "others", []) as $Summary[]

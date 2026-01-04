@@ -1,5 +1,5 @@
-import {h} from "preact";
 import type {EventHandler, TargetedEvent} from "preact";
+import {h} from "preact";
 import {$Compose, $Container, execStartOrStop} from "../states/container"
 import {get, map} from "lodash";
 import {DeleteBtn, PlayBtn} from "./buttons";
@@ -60,8 +60,8 @@ export const ContainerItem = ({data}: { data: $Container }) => {
                     <ContainerFillIcon/>
                 </span>
                 <div className="truncate text-nowrap">
-                    <p className="overflow-hidden text-ellipsis">{get(data, ["raw", "Labels", "com.docker.compose.service"], data.name)}</p>
-                    <p className="overflow-hidden text-ellipsis text-current/50">{data.raw.Image}</p>
+                    <p className="overflow-hidden text-ellipsis">{get(data, ["Labels", "com.docker.compose.service"], data.name)}</p>
+                    <p className="overflow-hidden text-ellipsis text-current/50">{data.Image}</p>
                 </div>
             </a>
             <span>

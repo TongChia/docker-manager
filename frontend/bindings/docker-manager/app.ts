@@ -64,7 +64,7 @@ export function ImageFiles(id: string): $CancellablePromise<void> {
     return $Call.ByID(1653876261, id);
 }
 
-export function ImageList(): $CancellablePromise<image$0.Summary[]> {
+export function ImageList(): $CancellablePromise<client$0.ImagesDiskUsage | null> {
     return $Call.ByID(3060495310).then(($result: any) => {
         return $$createType6($result);
     });
@@ -106,8 +106,8 @@ const $$createType1 = $Create.Nullable($$createType0);
 const $$createType2 = $Create.Array($$createType0);
 const $$createType3 = events$0.Message.createFrom;
 const $$createType4 = $Create.Nullable($$createType3);
-const $$createType5 = image$0.Summary.createFrom;
-const $$createType6 = $Create.Array($$createType5);
+const $$createType5 = client$0.ImagesDiskUsage.createFrom;
+const $$createType6 = $Create.Nullable($$createType5);
 const $$createType7 = image$0.InspectResponse.createFrom;
 const $$createType8 = $Create.Nullable($$createType7);
 const $$createType9 = network$0.Summary.createFrom;

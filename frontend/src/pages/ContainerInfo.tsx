@@ -1,21 +1,20 @@
 import {h} from 'preact';
-import {find, get, head, map} from "lodash";
-import {$Compose, $Container, $Summary, grouped, is$Compose, is$Container, state, updateOne} from "../states/container";
+import {find, get, head, isEmpty, map} from "lodash";
+import {$Compose, $Summary, grouped, is$Compose, is$Container, state, updateOne} from "../states/container";
 import {cx} from "../utils/classnames";
 import {RoutePropsForPath} from "preact-iso";
 import {useEffect} from "preact/hooks";
-import {CopyText} from "../components/CopyText";
 import {OpenFolder} from "../../bindings/docker-manager/app";
 import {ChevronRightIcon, FolderIcon, FolderOpenIcon} from "../components/icons";
 import {NoContent} from "../components/NoContent";
-import {KVTable, PropTable} from "../components/PropTable";
+import {KVTable, PortTable, PropTable} from "../components/PropTable";
 
 export function ContainerInfo({params}: RoutePropsForPath<"/:id/*">) {
     const selected = (find(state.value, {id: params.id}) || find(grouped.value, {id: params.id})) || {} as $Summary
 
     useEffect(() => {
         if (is$Container(selected))
-            updateOne(params.id).then(() => console.debug("update container info"))
+            updateOne(params.id).then(() => console.debug("update container info", selected))
     }, [params.id]);
 
     return is$Container(selected) ? (
@@ -25,7 +24,16 @@ export function ContainerInfo({params}: RoutePropsForPath<"/:id/*">) {
                 {key: "ID", value: selected.id, copyText: selected.Id},
                 {key: "Image", value: selected.Image, copyable: true},
                 {key: "Status", value: selected.Status},
-            ]} />
+            ]}/>
+            {selected.state === "running" && map(selected.NetworkSettings?.Networks, (v, k) => (
+                <KVTable data={[
+                    {key: "Network", value: k, copyable: true},
+                    {key: "IP", value: v?.IPAddress, copyable: true},
+                    ...(isEmpty(v?.DNSNames) ? [] : map(v?.DNSNames, n => ({key: "DNS Name", value: n, copyable: true}))),
+                    ...(isEmpty(v?.Aliases) ? [] : map(v?.Aliases, n => ({key: "Aliases", value: n, copyable: true}))),
+                ]} />
+            ))}
+            <PortTable data={selected.ports}/>
             <PropTable data={selected.Labels} title="Labels"/>
         </div>
     ) : is$Compose(selected) ? (
@@ -60,33 +68,6 @@ const GroupTable = ({data}: { data: $Compose }) => {
                     </tbody>
                 </table>
             </div>
-        </div>
-    )
-}
-
-const BasicInfoTable = ({data}: { data: $Container }) => {
-    return (
-        <div className="overflow-x-auto rounded-box border border-base-content/20">
-            <table className="table table-sm table-fixed truncate text-nowrap">
-                <tbody>
-                <tr>
-                    <th className="text-nowrap w-2/12">Name</th>
-                    <td className="w-10/12"><CopyText text={data.name} right/></td>
-                </tr>
-                <tr>
-                    <th>ID</th>
-                    <td><CopyText text={data.id} copyText={data.Id} right/></td>
-                </tr>
-                <tr>
-                    <th>Image</th>
-                    <td><CopyText text={data.Image} right/></td>
-                </tr>
-                <tr>
-                    <th>Status</th>
-                    <td className="text-right overflow-hidden text-ellipsis">{data.Status}</td>
-                </tr>
-                </tbody>
-            </table>
         </div>
     )
 }

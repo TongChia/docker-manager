@@ -17,7 +17,10 @@ export const VolumeIcon = () => (
 )
 
 export const VolumeFillIcon = (props: SVGAttributes<SVGSVGElement>) => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" {...props}><path d="M680-320q25 0 42.5-17t17.5-43q0-25-17.5-42.5T680-440q-26 0-43 17.5T620-380q0 26 17 43t43 17ZM80-600l136-136q11-11 25.5-17.5T273-760h413q17 0 31.5 6.5T743-736l137 136H80Zm80 400q-34 0-57-23t-23-57v-240h800v240q0 34-23.5 57T800-200H160Z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" {...props}>
+        <path
+            d="M680-320q25 0 42.5-17t17.5-43q0-25-17.5-42.5T680-440q-26 0-43 17.5T620-380q0 26 17 43t43 17ZM80-600l136-136q11-11 25.5-17.5T273-760h413q17 0 31.5 6.5T743-736l137 136H80Zm80 400q-34 0-57-23t-23-57v-240h800v240q0 34-23.5 57T800-200H160Z"/>
+    </svg>
 )
 
 export const ImageIcon = () => (
@@ -76,22 +79,35 @@ export const StackIcon = () => (
     </svg>
 )
 
-export const CopyIcon = ({className}: {className?: string}) => (
-    <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M760-200H320q-33 0-56.5-23.5T240-280v-560q0-33 23.5-56.5T320-920h280l240 240v400q0 33-23.5 56.5T760-200ZM560-640v-200H320v560h440v-360H560ZM160-40q-33 0-56.5-23.5T80-120v-560h80v560h440v80H160Zm160-800v200-200 560-560Z"/></svg>
+export const CopyIcon = ({className}: { className?: string }) => (
+    <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+        <path
+            d="M760-200H320q-33 0-56.5-23.5T240-280v-560q0-33 23.5-56.5T320-920h280l240 240v400q0 33-23.5 56.5T760-200ZM560-640v-200H320v560h440v-360H560ZM160-40q-33 0-56.5-23.5T80-120v-560h80v560h440v80H160Zm160-800v200-200 560-560Z"/>
+    </svg>
 )
 
 export const CheckIcon = (props: SVGAttributes<SVGSVGElement>) => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" {...props}><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" {...props}>
+        <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/>
+    </svg>
 )
 
 export const FolderIcon = (props: SVGAttributes<SVGSVGElement>) => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" {...props}><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h240l80 80h320q33 0 56.5 23.5T880-640v400q0 33-23.5 56.5T800-160H160Z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" {...props}>
+        <path
+            d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h240l80 80h320q33 0 56.5 23.5T880-640v400q0 33-23.5 56.5T800-160H160Z"/>
+    </svg>
 )
 
 export const FolderOpenIcon = (props: SVGAttributes<SVGSVGElement>) => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"  {...props}><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h240l80 80h320q33 0 56.5 23.5T880-640H160v400l96-320h684L837-217q-8 26-29.5 41.5T760-160H160Z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"  {...props}>
+        <path
+            d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h240l80 80h320q33 0 56.5 23.5T880-640H160v400l96-320h684L837-217q-8 26-29.5 41.5T760-160H160Z"/>
+    </svg>
 )
 
 export const ChevronRightIcon = (props: SVGAttributes<SVGSVGElement>) => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" {...props}><path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" {...props}>
+        <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z"/>
+    </svg>
 )

@@ -1,8 +1,6 @@
 import {computed, signal, Signal} from "@preact/signals";
 import {NetworkList} from "../../bindings/docker-manager/app";
-import {assign, get, map, size, sortBy} from "lodash";
-import {formatSize} from "../utils/docker";
-import {$VolumesDiskUsage} from "./volume";
+import {assign, get, map, size} from "lodash";
 import {Summary} from "../../bindings/github.com/moby/moby/api/types/network";
 
 export interface $Network extends Summary {

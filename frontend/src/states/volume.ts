@@ -1,21 +1,14 @@
-import {ImageList, VolumeList} from "../../bindings/docker-manager/app";
+import {VolumeList} from "../../bindings/docker-manager/app";
 import {assign, get, map, sortBy} from "lodash";
-import {signal, Signal} from "@preact/signals";
+import {batch, signal, Signal} from "@preact/signals";
 import {Volume} from "../../bindings/github.com/moby/moby/api/types/volume";
-import {VolumesDiskUsage} from "../../bindings/github.com/moby/moby/client";
 import {formatSize} from "../utils/docker";
-import { formatDistanceToNowStrict, format } from "date-fns";
+import {format, formatDistanceToNowStrict} from "date-fns";
 
 export interface $Volume extends Volume {
     size: string
     created: string
     unused: boolean
-}
-
-export interface $VolumesDiskUsage extends VolumesDiskUsage {
-    totalSize: string
-    // totalCount: string
-    items: $Volume[]
 }
 
 const formatCreated = (s?: string): string => {
@@ -31,13 +24,14 @@ const to$Volume = (item: Volume): $Volume => (assign(item, {
     unused: !item.UsageData?.RefCount
 }))
 
-export const state: Signal<$VolumesDiskUsage | null> = signal(null)
+export const state: Signal<$Volume[]> = signal([])
+export const total: Signal<string> = signal(formatSize(0))
+export const loaded: Signal<boolean> = signal(false)
 
 export const update = () => VolumeList().then(resp => {
-    state.value = assign(resp, {
-        totalSize: formatSize(resp?.TotalSize),
-        items: sortBy(map(resp?.Items, to$Volume), ["unused", "CreatedAt"])
+    batch(() => {
+        loaded.value = true
+        state.value = sortBy(map(resp?.Items, to$Volume), ["unused", "CreatedAt"])
+        total.value = formatSize(resp?.TotalSize)
     })
 })
-
-

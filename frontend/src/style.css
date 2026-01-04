@@ -171,6 +171,7 @@ body {
     .copy-icon {
         opacity: 0;
     }
+
     &:hover, &.copy-text-ok {
         .copy-icon {
             opacity: 1;
@@ -182,11 +183,12 @@ body {
     .folder-open-icon {
         display: none;
     }
+
     &:hover {
         .folder-icon {
             display: none;
         }
-        
+
         .folder-open-icon {
             display: block;
         }

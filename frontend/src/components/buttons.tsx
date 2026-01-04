@@ -3,11 +3,13 @@ import {cx} from "../utils/classnames";
 import {$Summary} from "../states/container";
 
 export const PlayBtn = ({state, ...rest}: { state: $Summary["state"] } & ButtonHTMLAttributes) => (
-    <button className={cx("btn btn-ghost btn-xs btn-square fill-current text-current", {"btn-disabled": state == "loading"})} {...rest}>
+    <button
+        className={cx("btn btn-ghost btn-xs btn-square fill-current text-current", {"btn-disabled": state == "loading"})} {...rest}>
         {state == "loading" ?
             <span className="loading loading-spinner loading-xs"></span> :
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" height="20px" width="20px">
-                {state == "stopped" ? <path d="M320-200v-560l440 280-440 280Z"/> : <path d="M240-240v-480h480v480H240Z"/>}
+                {state == "stopped" ? <path d="M320-200v-560l440 280-440 280Z"/> :
+                    <path d="M240-240v-480h480v480H240Z"/>}
             </svg>
         }
     </button>

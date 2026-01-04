@@ -1,16 +1,17 @@
 import {useEffect} from "preact/hooks";
-import {Fragment, h} from 'preact';
+import {h} from 'preact';
 import {DeleteBtn, PlusBtn, ShareBtn} from "../components/buttons";
-import {find, map} from "lodash";
+import {find, isEmpty, map} from "lodash";
 import {cx} from "../utils/classnames";
 import {Route, RoutePropsForPath, Router} from "preact-iso";
 import {NoContent} from "../components/NoContent";
 import {VolumeFillIcon} from "../components/icons";
 import {VolumeInfo} from "./VolumeInfo";
-import {state, update} from "../states/volume"
+import {state, total, loaded, update} from "../states/volume"
+import {Loading} from "../components/Loading";
 
 export function Volumes(props: RoutePropsForPath<"/:id/*">) {
-    const {items, TotalCount, totalSize} = state.value || {items: [], totalSize: 0, TotalCount: 0}
+    const items = state.value
     const selected = find(items, {Name: props.id})
 
     useEffect(() => {
@@ -25,15 +26,17 @@ export function Volumes(props: RoutePropsForPath<"/:id/*">) {
                 <nav className="navbar w-full bg-base-300 grow-0 flex justify-between">
                     <div className="px-4">
                         <p className="font-bold">Volumes</p>
-                        <p className="text-xs text-base-content/50">{totalSize} total</p>
+                        <p className="text-xs text-base-content/50">{total.value} total</p>
                     </div>
                 </nav>
                 {/* Page content here */}
                 <div className="flex-1 h-full bg-base-200 overflow-y-scroll">
-                    <ul className="menu my-menu image-menu w-full">
-                        {map(items, item => (
-                            <li className={cx({"disabled": item.unused})}>
-                                <span className={cx("grid-cols-[auto_max-content]", {"menu-active": item.Name == props.id})}>
+                    {!loaded.value ? <Loading/> : isEmpty(items) ? <NoContent/> :
+                        <ul className="menu my-menu image-menu w-full">
+                            {map(items, item => (
+                                <li key={item.Name} className={cx({"disabled": item.unused})}>
+                                <span
+                                    className={cx("grid-cols-[auto_max-content]", {"menu-active": item.Name == props.id})}>
                                     <a className="grid grid-cols-[min-content_auto] gap-2 items-center h-12"
                                        href={`/volumes/${item.Name}/info`}>
                                         <span className="icon  fill-info">
@@ -48,9 +51,9 @@ export function Volumes(props: RoutePropsForPath<"/:id/*">) {
                                         <DeleteBtn/>
                                     </span>
                                 </span>
-                            </li>
-                        ))}
-                    </ul>
+                                </li>
+                            ))}
+                        </ul>}
                 </div>
             </div>
 

@@ -1,5 +1,5 @@
 import {useEffect} from "preact/hooks";
-import {Fragment, h} from 'preact';
+import {h} from 'preact';
 import * as container from "../states/container";
 import {map} from "lodash";
 import {cx} from "../utils/classnames";
@@ -12,6 +12,7 @@ import {ImageInfo} from "./ImageInfo";
 
 export function Images(props: any) {
     const images = state.value
+    const totalSize = total.value
     // const selected = find(images, {Id: props.id})
 
     useEffect(() => {
@@ -26,7 +27,7 @@ export function Images(props: any) {
                 <nav className="navbar w-full bg-base-300 grow-0 flex justify-between">
                     <div className="px-4">
                         <p className="font-bold">Volumes</p>
-                        <p className="text-xs text-base-content/50">{total.value} total</p>
+                        <p className="text-xs text-base-content/50">{totalSize} total</p>
                     </div>
                 </nav>
                 {/* Page content here */}

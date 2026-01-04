@@ -1,6 +1,4 @@
-import {CopyText} from "../components/CopyText";
-import * as volume from "../../bindings/github.com/moby/moby/api/types/volume";
-import {Fragment, h} from "preact";
+import {h} from "preact";
 import {KVTable, PropTable} from "../components/PropTable";
 import {$Volume} from "../states/volume";
 
@@ -14,7 +12,7 @@ export const VolumeInfo = ({data}: { data: $Volume }) => {
                 {key: "Mount point", value: data.Mountpoint, copyable: true},
                 {key: "Created", value: data.created},
                 {key: "Size", value: data.size},
-            ]} />
+            ]}/>
             <PropTable title="Labels" data={data.Labels}/>
         </div>
     )

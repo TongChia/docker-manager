@@ -1,9 +1,9 @@
 import {isEmpty, map} from "lodash";
 import {CopyText} from "./CopyText";
-import {h, Fragment} from "preact";
-import {s} from "vite/dist/node/chunks/moduleRunnerTransport";
+import {Fragment, h} from "preact";
+import {PortSummary} from "../../bindings/github.com/moby/moby/api/types/container";
 
-export const TableTitle = ({title}: {title?: string}) => (
+export const TableTitle = ({title}: { title?: string }) => (
     <h4 className="mt-4 px-2 font-bold text-sm text-base-content/30">{title}</h4>
 )
 
@@ -11,7 +11,7 @@ export const PropTable = ({data, title}: { data?: Record<string, string>, title?
     if (isEmpty(data)) return ""
     return (
         <>
-            {!title ? "" : <TableTitle title={title} />}
+            {!title ? "" : <TableTitle title={title}/>}
             <div className="overflow-x-auto rounded-box border border-base-content/20">
                 <table className="table table-sm table-zebra table-fixed truncate text-nowrap">
                     <thead>
@@ -38,11 +38,14 @@ export const PropTable = ({data, title}: { data?: Record<string, string>, title?
     )
 }
 
-export const KVTable = ({data, title}: { data?: Array<{key: string, value?: string, copyable?: boolean, copyText?: string}>, title?: string }) => {
+export const KVTable = ({data, title}: {
+    data?: Array<{ key: string, value?: string, copyable?: boolean, copyText?: string }>,
+    title?: string
+}) => {
     if (isEmpty(data)) return ""
     return (
         <>
-            {!title ? "" : <TableTitle title={title} />}
+            {!title ? "" : <TableTitle title={title}/>}
             <div className="overflow-x-auto rounded-box border border-base-content/20">
                 <table className="table table-sm table-fixed truncate text-nowrap">
                     <tbody>
@@ -53,6 +56,36 @@ export const KVTable = ({data, title}: { data?: Array<{key: string, value?: stri
                                 <td className="w-10/12"><CopyText text={value} copyText={copyText} right/></td> :
                                 <td className="w-10/12 text-right overflow-hidden text-ellipsis">{value}</td>
                             }
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+            </div>
+        </>
+    )
+}
+
+export const PortTable = ({data}: { data: PortSummary[] }) => {
+    if (isEmpty(data)) return ""
+    return (
+        <>
+            <TableTitle title="Port Forwards"/>
+            <div className="overflow-x-auto rounded-box border border-base-content/20">
+                <table className="table table-sm table-zebra table-fixed truncate text-nowrap">
+                    <thead>
+                    <tr>
+                        <th className="w-4/12">Host Port</th>
+                        <th className="w-4/12">Container Port</th>
+                        <th className="w-5/12">Protocol</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {map(data, (p, k) => (
+                        <tr key={`port-${k}`}>
+                            {/*TODO: 打开浏览器链接*/}
+                            <td><CopyText text={String(p.PublicPort)}/></td>
+                            <td>{p.PrivatePort}</td>
+                            <td className="uppercase">{p.Type}</td>
                         </tr>
                     ))}
                     </tbody>
