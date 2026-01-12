@@ -1,7 +1,9 @@
 @import "tailwindcss";
+@import '@xterm/xterm/css/xterm.css';
 
 @plugin "daisyui" {
     root: ":root";
+    themes: all;
     logs: true;
 }
 
@@ -133,7 +135,7 @@ body {
         }
     }
 
-    fill: var(--color-info);
+    /*fill: var(--color-info);*/
 
     .menu-active {
         :where(:not(ul, details, .menu-title, .btn))& {

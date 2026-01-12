@@ -18,6 +18,7 @@ type App struct {
 	log *slog.Logger
 	cli *APIClient
 	bus ro.Subject[events.Message]
+	tws *PtySrv
 }
 
 // NewApp creates a new App application struct

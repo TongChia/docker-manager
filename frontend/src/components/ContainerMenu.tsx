@@ -1,12 +1,13 @@
 import type {EventHandler, TargetedEvent} from "preact";
 import {h} from "preact";
 import {$Compose, $Container, execStartOrStop} from "../states/container"
-import {get, map} from "lodash";
-import {DeleteBtn, PlayBtn} from "./buttons";
+import {filter, get, isEmpty, map} from "lodash";
+import {DeleteBtn, LinkBtn, PlayBtn} from "./buttons";
 import {useState} from "preact/hooks";
 import {cx} from "../utils/classnames";
 import {useRoute} from "preact-iso";
 import {ContainerFillIcon, StackIcon} from "./icons";
+import {memoizeColor, randomColor} from "../utils/theme";
 
 export const ContainerDropdown = ({data}: { data: $Compose }) => {
     const {params, path} = useRoute()
@@ -26,7 +27,7 @@ export const ContainerDropdown = ({data}: { data: $Compose }) => {
                 <summary onDblClick={() => setOpen(!open)} className={cx({"menu-active": isSelected})}>
                     <a className="grid grid-cols-[min-content_auto] gap-2 items-center h-12"
                        href={`/containers/${data.id}/info`}>
-                        <span className="icon "><StackIcon/></span>
+                        <span className={cx("icon", {[memoizeColor(data.name)]: !isSelected})}><StackIcon/></span>
                         {data.name}
                     </a>
                     <span>
@@ -56,7 +57,7 @@ export const ContainerItem = ({data}: { data: $Container }) => {
             <span className={cx("grid-cols-[auto_max-content]", {"menu-active": isSelected})}>
             <a className="grid grid-cols-[min-content_auto] gap-2 items-center h-12"
                href={`/containers/${data.id}/info`}>
-                <span className="icon mask mask-circle fill-neutral-content w-8 h-8 p-1 bg-cyan-500">
+                <span className="icon mask mask-circle fill-white w-8 h-8 p-1 bg-cyan-500">
                     <ContainerFillIcon/>
                 </span>
                 <div className="truncate text-nowrap">
@@ -65,6 +66,7 @@ export const ContainerItem = ({data}: { data: $Container }) => {
                 </div>
             </a>
             <span>
+                {map(data.urls, url => <LinkBtn url={url}/>)}
                 <PlayBtn state={data.state} onClick={onClick}/>
                 <DeleteBtn/>
             </span>

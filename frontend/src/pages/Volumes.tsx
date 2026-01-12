@@ -7,8 +7,9 @@ import {Route, RoutePropsForPath, Router} from "preact-iso";
 import {NoContent} from "../components/NoContent";
 import {VolumeFillIcon} from "../components/icons";
 import {VolumeInfo} from "./VolumeInfo";
-import {state, total, loaded, update} from "../states/volume"
+import {state, total, loaded, update, listen} from "../states/volume"
 import {Loading} from "../components/Loading";
+import {memoizeColor} from "../utils/theme";
 
 export function Volumes(props: RoutePropsForPath<"/:id/*">) {
     const items = state.value
@@ -16,6 +17,7 @@ export function Volumes(props: RoutePropsForPath<"/:id/*">) {
 
     useEffect(() => {
         update().catch(console.error)
+        return listen()
     }, []);
 
 
@@ -39,7 +41,7 @@ export function Volumes(props: RoutePropsForPath<"/:id/*">) {
                                     className={cx("grid-cols-[auto_max-content]", {"menu-active": item.Name == props.id})}>
                                     <a className="grid grid-cols-[min-content_auto] gap-2 items-center h-12"
                                        href={`/volumes/${item.Name}/info`}>
-                                        <span className="icon  fill-info">
+                                        <span className={cx("icon", memoizeColor(item.Name))}>
                                             <VolumeFillIcon className="w-6 h-6"/>
                                         </span>
                                         <div className="truncate text-nowrap">

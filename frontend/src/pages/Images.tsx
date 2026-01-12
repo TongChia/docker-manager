@@ -16,7 +16,7 @@ export function Images(props: any) {
     // const selected = find(images, {Id: props.id})
 
     useEffect(() => {
-        container.update().then(() => update()).catch(console.error)
+        container.update().then(update).catch(console.error)
         return listen()
     }, []);
 

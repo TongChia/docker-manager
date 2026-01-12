@@ -3,7 +3,7 @@ import {Summary} from "../../bindings/github.com/moby/moby/api/types/image";
 import {ImageList} from "../../bindings/docker-manager/app";
 import {Events} from "@wailsio/runtime";
 import {WailsEvent} from "@wailsio/runtime/types/events";
-import * as events from "../../bindings/github.com/moby/moby/api/types/events";
+import {Message} from "../../bindings/github.com/moby/moby/api/types/events";
 import {assign, head, map, sortBy, split} from "lodash";
 import {formatSize, shortId} from "../utils/docker";
 import {format, formatDistanceToNowStrict} from "date-fns";
@@ -11,6 +11,7 @@ import {format, formatDistanceToNowStrict} from "date-fns";
 
 export const state: Signal<$Image[]> = signal([])
 export const total: Signal<string> = signal(formatSize(0))
+export const loaded: Signal<boolean> = signal(false)
 
 export interface $Image extends Summary {
     id: string
@@ -42,6 +43,7 @@ const to$Image = (item: Summary): $Image => assign(item, {
 export const update = () => ImageList().then(result => {
     _now = Date.now() / 1000
     batch(() => {
+        loaded.value = true
         state.value = sortBy(map(result?.Items, to$Image), ["unused", "fromNow"])
         total.value = formatSize(result?.TotalSize)
     })
@@ -49,9 +51,7 @@ export const update = () => ImageList().then(result => {
 
 export const listen = () => {
     return Events.On("message:image", (ev: WailsEvent<"message:image">) => {
-        const msg = ev.data as events.Message
+        const msg = ev.data as Message
         console.debug("message:image", msg)
     })
 }
-
-// export const total = computed<string>(() => formatSize(reduce(state.value, (r, item) => r + item.Size, 0)))

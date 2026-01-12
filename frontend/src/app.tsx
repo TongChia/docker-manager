@@ -6,6 +6,8 @@ import {ErrorBoundary, LocationProvider, Route, Router} from "preact-iso";
 import {MainMenu} from "./components/MainMenu";
 import {DefaultPage} from "./pages/DefaultPage";
 import {Networks} from "./pages/Networks";
+import {Settings} from "./pages/Settings";
+import {TerminalPage} from "./pages/Terminal";
 
 export function App(props: any) {
     // const [isDrawerOpen, setDrawerState] = useState(true);
@@ -23,13 +25,15 @@ export function App(props: any) {
                 {/* Layout Content */}
                 <ErrorBoundary onError={(e) => {
                     console.error("ErrorBoundary: ", e);
-                    window.location.replace('/')
+                    // window.location.replace('/')
                 }}>
                     <Router>
                         <Route component={Containers} path="/containers/:id/*"/>
                         <Route component={Volumes} path="/volumes/:id/*"/>
                         <Route component={Images} path="/images/:id/*"/>
                         <Route component={Networks} path="/networks/:id/*"/>
+                        <Route component={TerminalPage} path="/terminal"/>
+                        <Route component={Settings} path="/settings"/>
                         <Route component={DefaultPage} default/>
                     </Router>
                 </ErrorBoundary>

@@ -7,7 +7,7 @@ import {useEffect} from "preact/hooks";
 import {OpenFolder} from "../../bindings/docker-manager/app";
 import {ChevronRightIcon, FolderIcon, FolderOpenIcon} from "../components/icons";
 import {NoContent} from "../components/NoContent";
-import {KVTable, PortTable, PropTable} from "../components/PropTable";
+import {KVTable, MountTable, PortTable, PropTable} from "../components/PropTable";
 
 export function ContainerInfo({params}: RoutePropsForPath<"/:id/*">) {
     const selected = (find(state.value, {id: params.id}) || find(grouped.value, {id: params.id})) || {} as $Summary
@@ -25,7 +25,7 @@ export function ContainerInfo({params}: RoutePropsForPath<"/:id/*">) {
                 {key: "Image", value: selected.Image, copyable: true},
                 {key: "Status", value: selected.Status},
             ]}/>
-            {selected.state === "running" && map(selected.NetworkSettings?.Networks, (v, k) => (
+            {!selected.isStop && map(selected.NetworkSettings?.Networks, (v, k) => (
                 <KVTable data={[
                     {key: "Network", value: k, copyable: true},
                     {key: "IP", value: v?.IPAddress, copyable: true},
@@ -34,6 +34,7 @@ export function ContainerInfo({params}: RoutePropsForPath<"/:id/*">) {
                 ]} />
             ))}
             <PortTable data={selected.ports}/>
+            <MountTable data={selected.Mounts}/>
             <PropTable data={selected.Labels} title="Labels"/>
         </div>
     ) : is$Compose(selected) ? (

@@ -4,6 +4,9 @@ import {batch, signal, Signal} from "@preact/signals";
 import {Volume} from "../../bindings/github.com/moby/moby/api/types/volume";
 import {formatSize} from "../utils/docker";
 import {format, formatDistanceToNowStrict} from "date-fns";
+import {Events} from "@wailsio/runtime";
+import {WailsEvent} from "@wailsio/runtime/types/events";
+import {Message} from "../../bindings/github.com/moby/moby/api/types/events";
 
 export interface $Volume extends Volume {
     size: string
@@ -35,3 +38,12 @@ export const update = () => VolumeList().then(resp => {
         total.value = formatSize(resp?.TotalSize)
     })
 })
+
+export const listen = () => {
+    return Events.On("message:volume", (ev: WailsEvent<"message:volume">) => {
+        const msg = ev.data as Message
+        update().catch(console.error)
+        // TODO: switch volume event action
+        console.debug("message:volume", msg)
+    })
+}

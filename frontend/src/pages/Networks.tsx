@@ -5,7 +5,7 @@ import {cx} from "../utils/classnames";
 import {DeleteBtn, PlusBtn, ShareBtn} from "../components/buttons";
 import {Route, Router} from "preact-iso";
 import {NoContent} from "../components/NoContent";
-import {state, total, update} from "../states/network";
+import {listen, state, total, update} from "../states/network";
 import {NetworkInfo} from "./NetworkInfo";
 
 
@@ -17,6 +17,7 @@ export function Networks(props: any) {
 
     useEffect(() => {
         update().catch(console.error)
+        return listen()
     }, []);
 
     return (
@@ -38,7 +39,7 @@ export function Networks(props: any) {
                                     className={cx("grid-cols-[auto_max-content]", {"menu-active": item.Id == props.id})}>
                                     <a className="grid grid-cols-[min-content_auto] gap-2 items-center h-12"
                                        href={`/networks/${item.Id}/info`}>
-                                        <span className="icon  fill-info">
+                                        <span className="icon fill-info">
                                         </span>
                                         <div className="truncate text-nowrap">
                                             <p className="overflow-hidden text-ellipsis">{item.Name}</p>

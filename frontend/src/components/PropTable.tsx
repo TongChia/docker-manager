@@ -1,7 +1,7 @@
-import {isEmpty, map} from "lodash";
+import {get, isEmpty, map} from "lodash";
 import {CopyText} from "./CopyText";
 import {Fragment, h} from "preact";
-import {PortSummary} from "../../bindings/github.com/moby/moby/api/types/container";
+import {MountPoint, PortSummary} from "../../bindings/github.com/moby/moby/api/types/container";
 
 export const TableTitle = ({title}: { title?: string }) => (
     <h4 className="mt-4 px-2 font-bold text-sm text-base-content/30">{title}</h4>
@@ -76,7 +76,7 @@ export const PortTable = ({data}: { data: PortSummary[] }) => {
                     <tr>
                         <th className="w-4/12">Host Port</th>
                         <th className="w-4/12">Container Port</th>
-                        <th className="w-5/12">Protocol</th>
+                        <th className="w-4/12">Protocol</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -86,6 +86,33 @@ export const PortTable = ({data}: { data: PortSummary[] }) => {
                             <td><CopyText text={String(p.PublicPort)}/></td>
                             <td>{p.PrivatePort}</td>
                             <td className="uppercase">{p.Type}</td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+            </div>
+        </>
+    )
+}
+export const MountTable = ({data}: { data: MountPoint[] }) => {
+    if (isEmpty(data)) return ""
+    return (
+        <>
+            <TableTitle title="Mounts"/>
+            <div className="overflow-x-auto rounded-box border border-base-content/20">
+                <table className="table table-sm table-zebra table-fixed truncate text-nowrap">
+                    <thead>
+                    <tr>
+                        <th className="w-6/12">Source</th>
+                        <th className="w-6/12">Destination</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {map(data, (m, k) => (
+                        <tr key={`mount-${k}`}>
+                            {/*TODO: 打开文件夹*/}
+                            <td><CopyText text={String(m.Source)}/></td>
+                            <td>{m.Destination}</td>
                         </tr>
                     ))}
                     </tbody>

@@ -1,6 +1,6 @@
-import {computed, Signal, signal} from "@preact/signals";
-import * as container from "../../bindings/github.com/moby/moby/api/types/container";
-import * as events from "../../bindings/github.com/moby/moby/api/types/events";
+import {batch, computed, Signal, signal} from "@preact/signals";
+import {Summary} from "../../bindings/github.com/moby/moby/api/types/container";
+import {Message} from "../../bindings/github.com/moby/moby/api/types/events";
 import {Events} from '@wailsio/runtime'
 import {ContainerById, ContainerList, StartContainer, StopContainer} from "../../bindings/docker-manager/app";
 import {memoizeUUID} from "../utils/uuid";
@@ -34,17 +34,23 @@ export interface $Summary {
     isStop: boolean
 }
 
-export class $Container extends container.Summary implements $Summary {
+export class $Container extends Summary implements $Summary {
     public type: $Summary["type"] = "Container"
     #state?: $Summary["state"]
 
     constructor(
-        source: container.Summary,
+        source: Summary,
         public id: string = source.Id.slice(0, 12),
         public name: string = replace(head(source.Names) || "no_name", "/", ""),
         public ports: PortSummary[] = map(groupBy(source.Ports, item => `${item.PublicPort}:${item.PrivatePort}/${item.Type}`), head) as PortSummary[],
     ) {
         super(source)
+    }
+
+    get urls() {
+        // TODO: get host address
+        const hostAddr = "localhost"
+        return map(filter(this.ports, {"Type": "tcp"}), p => `${p.PublicPort == 443 ? "https" : "http"}://${hostAddr}:${p.PublicPort}`)
     }
 
     get state() {
@@ -113,9 +119,13 @@ export const is$Container = (item: $Summary): item is $Container => item.type ==
 export const is$Compose = (item: $Summary): item is $Compose => item.type === 'Compose'
 
 export const state: Signal<Array<$Container>> = signal([])
+export const loaded: Signal<boolean> = signal(false)
 
 export const update = () => ContainerList().then((list) => {
-    state.value = map(list, item => new $Container(item))
+    batch(() => {
+        loaded.value = true
+        state.value = map(list, item => new $Container(item))
+    })
 })
 
 export const addOne = (Id: string) => ContainerById(Id).then(item => {
@@ -198,7 +208,7 @@ export const listen = () => {
      */
 
     return Events.On("message:container", (ev: WailsEvent<"message:container">) => {
-        const msg = ev.data as events.Message
+        const msg = ev.data as Message
         console.debug("get action", msg)
         switch (msg.Action) {
             case "create":
