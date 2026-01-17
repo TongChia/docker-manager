@@ -44,6 +44,7 @@ func main() {
 	})
 
 	app.RegisterService(application.NewService(NewApp(app)))
+	app.RegisterService(application.NewService(NewTerm(app)))
 
 	err := app.Run()
 	if err != nil {

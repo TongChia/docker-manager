@@ -13,12 +13,10 @@ import (
 // App struct
 type App struct {
 	app *application.App
-
 	ctx context.Context
 	log *slog.Logger
 	cli *APIClient
 	bus ro.Subject[events.Message]
-	tws *PtySrv
 }
 
 // NewApp creates a new App application struct
@@ -36,7 +34,7 @@ func (a *App) ServiceStartup(ctx context.Context, options application.ServiceOpt
 	a.ctx = ctx
 	_ = a.connectApiClient()
 	a.bus.SubscribeWithContext(ctx, ro.OnNext(func(msg events.Message) {
-		a.log.Debug(fmt.Sprintf("message: %+v", msg))
+		//a.log.Debug(fmt.Sprintf("message: %+v", msg))
 		a.app.Event.Emit(fmt.Sprintf("message:%s", msg.Type), msg)
 	}))
 	a.log.Info("App startup!")

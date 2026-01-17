@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"net"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -33,42 +34,6 @@ var upgrader = websocket.Upgrader{
 			return strings.HasPrefix(s, "wails://")
 		})
 	},
-}
-
-type SrvStatus int
-
-const (
-	SrvStatusStopped SrvStatus = 0
-	SrvStatusRunning           = 1
-)
-
-type WsSrv interface {
-	*http.Server
-	Token() string
-	Close() error
-	IsClose() bool
-}
-
-type WsSrvImpl struct {
-	*http.Server
-	token  string
-	status SrvStatus
-}
-
-func (w *WsSrvImpl) Token() string {
-	if w.token == "" {
-		w.token = lo.RandomString(12, lo.LettersCharset)
-	}
-	return w.token
-}
-
-func (w *WsSrvImpl) Close() error {
-	w.status = SrvStatusStopped
-	return w.Server.Close()
-}
-
-func (w *WsSrvImpl) IsClose() bool {
-	return w.status == SrvStatusStopped
 }
 
 //func (a *App) Term(opt *TermOption) (addr, token string, err error) {
@@ -158,36 +123,31 @@ func (r *roPtyImpl) ClearScreen() {
 	r.Observer.Next([]byte("\x1b[2J\x1b[H"))
 }
 
-//func NewRoPty(opt *TermOption) (RoPty, error) {
-//	ptmx, err := pty.New()
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	err = ptmx.Resize(opt.Cols, opt.Rows)
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	// TODO: Windows
-//	shell := os.Getenv("SHELL")
-//	c := ptmx.Command("/usr/bin/env", shell, "--login")
-//	//c := ptmx.Command("/usr/bin/env", "/bin/zsh", "--login")
-//	c.Env = append(os.Environ())
-//	c.Dir = os.Getenv("HOME")
-//
-//	if err := c.Start(); err != nil {
-//		return nil, err
-//	}
-//
-//	go func() {
-//		err := c.Wait()
-//		slog.Warn("进程已退出", "err", err)
-//		_roPty = nil
-//	}()
-//
-//	return &roPtyImpl{ptmx, createPtyWriter(ptmx), createPtyReader(ptmx)}, nil
-//}
+func NewRoPty(cancel func()) (RoPty, error) {
+	ptmx, err := pty.New()
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO: Windows
+	shell := os.Getenv("SHELL")
+	c := ptmx.Command("/usr/bin/env", shell, "--login")
+	//c := ptmx.Command("/usr/bin/env", "/bin/zsh", "--login")
+	c.Env = append(os.Environ())
+	c.Dir = os.Getenv("HOME")
+
+	if err := c.Start(); err != nil {
+		return nil, err
+	}
+
+	go func() {
+		err := c.Wait()
+		slog.Warn("进程已退出", "err", err)
+		cancel()
+	}()
+
+	return &roPtyImpl{ptmx, createPtyWriter(ptmx), createPtyReader(ptmx)}, nil
+}
 
 func createPtyReader(t pty.Pty) ro.Observable[[]byte] {
 	// pty reader 是一个可以被重复订阅的 Subject，缓存最后一个发出的内容，并在被再次订阅时
