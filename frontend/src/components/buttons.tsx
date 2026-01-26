@@ -2,6 +2,7 @@ import {ButtonHTMLAttributes, h} from "preact";
 import {cx} from "../utils/classnames";
 import {$Summary} from "../states/container";
 import {Browser} from "@wailsio/runtime";
+import {RefreshIcon, RemoveIcon} from "./icons";
 
 
 export const LinkBtn = ({url}: {url: string}) => (
@@ -52,10 +53,21 @@ export const ShareBtn = () => (
     </button>
 )
 
-export const PlusBtn = () => (
-    <button className="btn btn-ghost btn-xs btn-square fill-current">
-        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px">
+export const PlusBtn = ({className, ...rest}: ButtonHTMLAttributes) => (
+    <button className={cx("btn btn-ghost btn-xs btn-square fill-current", className)} {...rest}>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" className="size-full">
             <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/>
         </svg>
+    </button>
+)
+
+export const RefreshBtn = ({className, ...rest}: ButtonHTMLAttributes) => (
+    <button className={cx("btn btn-ghost btn-xs btn-square fill-current", className)} {...rest}>
+        <RefreshIcon className="size-full" />
+    </button>
+)
+export const MinusBtn = ({className, ...rest}: ButtonHTMLAttributes) => (
+    <button className={cx("btn btn-ghost btn-xs btn-square fill-current", className)} {...rest}>
+        <RemoveIcon className="size-full" />
     </button>
 )

@@ -11,22 +11,6 @@ html {
     background-color: rgba(0, 0, 0, 0);
     scrollbar-color: color-mix(in oklch, currentColor 20%, #0000) #0000;
     scrollbar-width: thin;
-
-    ::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-        background: color-mix(in oklch, currentColor 20%, #0000)
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: #000;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-        background: #555;
-    }
 }
 
 body {
@@ -200,4 +184,12 @@ body {
 #terminal {
     height: calc(100vh - 4rem);
     width: 100%;
+}
+
+.navbar {
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none; /* 隐藏 */
+        margin: 0; /* 确保没有任何间距 */
+    }
 }

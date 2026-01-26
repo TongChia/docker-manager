@@ -30,7 +30,7 @@ export const MainMenu = () => {
             {name: "Services", href: "/services", icon: ServiceIcon}
         ],
         "General": [
-            {name: "Terminal", href: "/terminal", icon: TerminalIcon},
+            {name: "Terminal", href: "/terminal", icon: () => <TerminalIcon className="w-6" />},
             {name: "Settings", href: "/settings", icon: SettingsIcon},
         ]
     }
@@ -41,7 +41,7 @@ export const MainMenu = () => {
             <li className="menu-title text-left text-xs font-bold text-base-content/20 is-drawer-close:hidden">Docker</li>
 
             {map(menus.Docker, (m) => (
-                <li>
+                <li key={m.name}>
                     <a className={cx("is-drawer-close:tooltip is-drawer-close:tooltip-right", {
                         "menu-active": path == m.href,
                         "menu-active-2": startsWith(path, m.root)

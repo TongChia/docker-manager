@@ -147,8 +147,10 @@ export const setState = (Ids: string[], s: $Summary["state"]) => {
 }
 
 export const execStartOrStop = (Ids: string[], isStop: boolean) => {
-    setState(Ids, "loading")
-    const promise = isStop ? StartContainer(Ids) : StopContainer(Ids)
+    const targetState = isStop ? "running" : "stopped"
+    const _ids = map(filter(state.peek(), (item) => includes(Ids, item.id) && item.state != targetState), "id")
+    setState(_ids, "loading")
+    const promise = isStop ? StartContainer(_ids) : StopContainer(_ids)
     promise.catch(err => console.error("exec start container, Ids: ", Ids, err))
 }
 

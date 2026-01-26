@@ -7,10 +7,48 @@ import { Create as $Create } from "@wailsio/runtime";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: Unused imports
+import * as json$0 from "../../../../encoding/json/models.js";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
+import * as container$0 from "../api/types/container/models.js";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
 import * as image$0 from "../api/types/image/models.js";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: Unused imports
 import * as volume$0 from "../api/types/volume/models.js";
+
+/**
+ * ContainerInspectResult holds the result from the [Client.ConfigInspect] method.
+ */
+export class ContainerInspectResult {
+    "Container": container$0.InspectResponse;
+    "Raw": json$0.RawMessage;
+
+    /** Creates a new ContainerInspectResult instance. */
+    constructor($$source: Partial<ContainerInspectResult> = {}) {
+        if (!("Container" in $$source)) {
+            this["Container"] = (new container$0.InspectResponse());
+        }
+        if (!("Raw" in $$source)) {
+            this["Raw"] = null;
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new ContainerInspectResult instance from a string or object.
+     */
+    static createFrom($$source: any = {}): ContainerInspectResult {
+        const $$createField0_0 = $$createType0;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("Container" in $$parsedSource) {
+            $$parsedSource["Container"] = $$createField0_0($$parsedSource["Container"]);
+        }
+        return new ContainerInspectResult($$parsedSource as Partial<ContainerInspectResult>);
+    }
+}
 
 /**
  * ImagesDiskUsage contains disk usage information for images.
@@ -66,7 +104,7 @@ export class ImagesDiskUsage {
      * Creates a new ImagesDiskUsage instance from a string or object.
      */
     static createFrom($$source: any = {}): ImagesDiskUsage {
-        const $$createField4_0 = $$createType1;
+        const $$createField4_0 = $$createType2;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("Items" in $$parsedSource) {
             $$parsedSource["Items"] = $$createField4_0($$parsedSource["Items"]);
@@ -129,7 +167,7 @@ export class VolumesDiskUsage {
      * Creates a new VolumesDiskUsage instance from a string or object.
      */
     static createFrom($$source: any = {}): VolumesDiskUsage {
-        const $$createField4_0 = $$createType3;
+        const $$createField4_0 = $$createType4;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("Items" in $$parsedSource) {
             $$parsedSource["Items"] = $$createField4_0($$parsedSource["Items"]);
@@ -139,7 +177,8 @@ export class VolumesDiskUsage {
 }
 
 // Private type creation functions
-const $$createType0 = image$0.Summary.createFrom;
-const $$createType1 = $Create.Array($$createType0);
-const $$createType2 = volume$0.Volume.createFrom;
-const $$createType3 = $Create.Array($$createType2);
+const $$createType0 = container$0.InspectResponse.createFrom;
+const $$createType1 = image$0.Summary.createFrom;
+const $$createType2 = $Create.Array($$createType1);
+const $$createType3 = volume$0.Volume.createFrom;
+const $$createType4 = $Create.Array($$createType3);

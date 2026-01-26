@@ -317,6 +317,58 @@ export class PeerInfo {
 }
 
 /**
+ * Port is a type representing a single port number and protocol in the format "<portnum>/[<proto>]".
+ * 
+ * The zero port value, i.e. Port{}, is invalid; use [ParsePort] to create a valid Port value.
+ */
+export type Port = string;
+
+/**
+ * PortBinding represents a binding between a Host IP address and a Host Port.
+ */
+export class PortBinding {
+    /**
+     * HostIP is the host IP Address
+     */
+    "HostIp": netip$0.Addr;
+
+    /**
+     * HostPort is the host port number
+     */
+    "HostPort": string;
+
+    /** Creates a new PortBinding instance. */
+    constructor($$source: Partial<PortBinding> = {}) {
+        if (!("HostIp" in $$source)) {
+            this["HostIp"] = "";
+        }
+        if (!("HostPort" in $$source)) {
+            this["HostPort"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new PortBinding instance from a string or object.
+     */
+    static createFrom($$source: any = {}): PortBinding {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new PortBinding($$parsedSource as Partial<PortBinding>);
+    }
+}
+
+/**
+ * PortMap is a collection of [PortBinding] indexed by [Port].
+ */
+export type PortMap = { [_: Port]: PortBinding[] };
+
+/**
+ * PortSet is a collection of structs indexed by [Port].
+ */
+export type PortSet = { [_: Port]: {} };
+
+/**
  * Summary Network list response item
  * 
  * swagger:model Summary

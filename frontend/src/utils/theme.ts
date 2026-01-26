@@ -153,9 +153,9 @@ export const toXtermjsTheme: (src: Record<string, string>) => ITheme = (src) => 
     cursor: src["--color-primary"],
     cursorAccent: src["--color-primary"],
 
-    selectionBackground: src["--color-secondary"],
-    selectionForeground: src["--color-secondary-content"],
-    selectionInactiveBackground: src["--color-secondary"],
+    selectionBackground: src["--color-primary"],
+    selectionForeground: src["--color-primary-content"],
+    selectionInactiveBackground: src["--color-primary"],
 
     black: src["--color-accent-content"],
     brightBlack: src["--color-accent-content"],

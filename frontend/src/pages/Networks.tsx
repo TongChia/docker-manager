@@ -1,4 +1,4 @@
-import {useEffect} from "preact/hooks";
+import {useEffect, useState} from "preact/hooks";
 import {h} from 'preact';
 import {find, map} from "lodash";
 import {cx} from "../utils/classnames";
@@ -7,16 +7,18 @@ import {Route, Router} from "preact-iso";
 import {NoContent} from "../components/NoContent";
 import {listen, state, total, update} from "../states/network";
 import {NetworkInfo} from "./NetworkInfo";
+import {Loading} from "../components/Loading";
 
 
 export function Networks(props: any) {
     const networks = state.value
     const selected = find(state.value, {Id: props.id})
+    const [loading, setLoading] = useState(true)
 
-    console.debug(selected)
+    // console.debug(selected)
 
     useEffect(() => {
-        update().catch(console.error)
+        update().catch(console.error).finally(() => setLoading(false))
         return listen()
     }, []);
 
@@ -32,9 +34,10 @@ export function Networks(props: any) {
                 </nav>
                 {/* Page content here */}
                 <div className="flex-1 h-full bg-base-200 overflow-y-scroll">
-                    <ul className="menu my-menu w-full">
-                        {map(networks, item => (
-                            <li className={""}>
+                    {loading ? <Loading /> :
+                        <ul className="menu my-menu w-full">
+                            {map(networks, item => (
+                                <li className={""}>
                                 <span
                                     className={cx("grid-cols-[auto_max-content]", {"menu-active": item.Id == props.id})}>
                                     <a className="grid grid-cols-[min-content_auto] gap-2 items-center h-12"
@@ -50,9 +53,10 @@ export function Networks(props: any) {
                                         <DeleteBtn/>
                                     </span>
                                 </span>
-                            </li>
-                        ))}
-                    </ul>
+                                </li>
+                            ))}
+                        </ul>
+                    }
                 </div>
             </div>
 

@@ -1,7 +1,7 @@
 import {EventHandler, h, TargetedEvent} from 'preact';
-import {Containers} from './pages/Containers';
+import {Containers} from './pages/container/Containers';
 import {Volumes} from "./pages/Volumes";
-import {Images} from "./pages/Images";
+import {Images} from "./pages/image/Images";
 import {ErrorBoundary, LocationProvider, Route, Router} from "preact-iso";
 import {MainMenu} from "./components/MainMenu";
 import {DefaultPage} from "./pages/DefaultPage";

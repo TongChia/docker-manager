@@ -39,17 +39,17 @@ func (t *Term) ServiceShutdown() error {
 	return nil
 }
 
-var path = "/ws/pty/"
+var wspath = "/ws/pty/"
 
 func (t *Term) Serve() (string, error) {
 	if t.srv != nil {
-		return fmt.Sprintf("ws://%s%s?token=%s", t.srv.Addr, path, t.token), nil
+		return fmt.Sprintf("ws://%s%s?token=%s", t.srv.Addr, wspath, t.token), nil
 	}
 	srv := &http.Server{Addr: fmt.Sprintf("127.0.0.1:%d", getPort())}
 	var _WsConn *websocket.Conn // old websocket conn
 
 	go func() {
-		http.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
+		http.HandleFunc(wspath, func(w http.ResponseWriter, r *http.Request) {
 			query := r.URL.Query()
 			if query.Get("token") != t.token {
 				w.WriteHeader(http.StatusUnauthorized)
@@ -94,12 +94,20 @@ func (t *Term) Serve() (string, error) {
 	}()
 
 	t.srv = srv
-	return fmt.Sprintf("ws://%s%s?token=%s", t.srv.Addr, path, t.token), nil
+	return fmt.Sprintf("ws://%s%s?token=%s", t.srv.Addr, wspath, t.token), nil
 }
 
 func (t *Term) Resize(cols, rows int) error {
 	if t.pty != nil {
 		return t.pty.Resize(cols, rows)
+	}
+	return nil
+}
+
+func (t *Term) Clear() error {
+	if t.pty != nil {
+		_, err := t.pty.Write([]byte("\x1b[2J\x1b[H"))
+		return err
 	}
 	return nil
 }

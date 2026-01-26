@@ -8,9 +8,13 @@ export {
     IPAM,
     IPAMConfig,
     PeerInfo,
+    PortBinding,
     Summary
 } from "./models.js";
 
 export type {
-    HardwareAddr
+    HardwareAddr,
+    Port,
+    PortMap,
+    PortSet
 } from "./models.js";

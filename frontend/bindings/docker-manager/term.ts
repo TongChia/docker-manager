@@ -5,6 +5,10 @@
 // @ts-ignore: Unused imports
 import { Call as $Call, CancellablePromise as $CancellablePromise, Create as $Create } from "@wailsio/runtime";
 
+export function Clear(): $CancellablePromise<void> {
+    return $Call.ByID(287594379);
+}
+
 export function Resize(cols: number, rows: number): $CancellablePromise<void> {
     return $Call.ByID(2328948358, cols, rows);
 }

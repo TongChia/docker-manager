@@ -1,15 +1,15 @@
 import {h} from 'preact';
 import {find, get, head, isEmpty, map} from "lodash";
-import {$Compose, $Summary, grouped, is$Compose, is$Container, state, updateOne} from "../states/container";
-import {cx} from "../utils/classnames";
+import {$Compose, $Summary, grouped, is$Compose, is$Container, state, updateOne} from "../../states/container";
+import {cx} from "../../utils/classnames";
 import {RoutePropsForPath} from "preact-iso";
 import {useEffect} from "preact/hooks";
-import {OpenFolder} from "../../bindings/docker-manager/app";
-import {ChevronRightIcon, FolderIcon, FolderOpenIcon} from "../components/icons";
-import {NoContent} from "../components/NoContent";
-import {KVTable, MountTable, PortTable, PropTable} from "../components/PropTable";
+import {OpenFolder} from "../../../bindings/docker-manager/app";
+import {ChevronRightIcon, FolderIcon, FolderOpenIcon} from "../../components/icons";
+import {NoContent} from "../../components/NoContent";
+import {KVTable, MountTable, PortTable, PropTable} from "../../components/PropTable";
 
-export function ContainerInfo({params}: RoutePropsForPath<"/:id/*">) {
+export function InfoPage({params}: RoutePropsForPath<"/:id/*">) {
     const selected = (find(state.value, {id: params.id}) || find(grouped.value, {id: params.id})) || {} as $Summary
 
     useEffect(() => {
@@ -18,7 +18,7 @@ export function ContainerInfo({params}: RoutePropsForPath<"/:id/*">) {
     }, [params.id]);
 
     return is$Container(selected) ? (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 p-4">
             <KVTable data={[
                 {key: "Name", value: selected.name, copyable: true},
                 {key: "ID", value: selected.id, copyText: selected.Id},
@@ -38,7 +38,7 @@ export function ContainerInfo({params}: RoutePropsForPath<"/:id/*">) {
             <PropTable data={selected.Labels} title="Labels"/>
         </div>
     ) : is$Compose(selected) ? (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 p-4">
             <GroupTable data={selected}/>
             <OpenComposeFolder data={selected}/>
         </div>

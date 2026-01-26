@@ -8,7 +8,7 @@ import {Browser, System} from "@wailsio/runtime";
 import {XTermThemeDark, XTermThemeLight} from "../utils/theme";
 import {WebLinksAddon} from "@xterm/addon-web-links";
 import {AttachAddon} from "@xterm/addon-attach";
-import {useEffect, useRef} from "preact/hooks";
+import {useEffect, useRef, useState} from "preact/hooks";
 
 const doResize = debounce((cols: number, rows: number) => {
     Term.Resize(cols, rows).catch(console.error)
@@ -22,6 +22,7 @@ interface $TerminalRender {
 }
 
 const termRender = signal<$TerminalRender | null>(null)
+const fontSize = signal<number>(12)
 
 const initTerminal = async (terminalRef: RefObject<HTMLDivElement>) => {
     if (!terminalRef.current) return
@@ -68,7 +69,7 @@ const initTerminal = async (terminalRef: RefObject<HTMLDivElement>) => {
 
     const container = document.createElement("div")
     container.style = "width: 100%; height: 100%;"
-    terminalRef.current.appendChild(container)
+    terminalRef.current.replaceChildren(container)
     term.open(container);
 
     // 调整尺寸
@@ -90,7 +91,6 @@ const initTerminal = async (terminalRef: RefObject<HTMLDivElement>) => {
     }
 }
 
-
 export const useTerminal = () => {
     const terminalRef = useRef<HTMLDivElement>(null);
 
@@ -104,5 +104,30 @@ export const useTerminal = () => {
         }
     })
 
-    return terminalRef
+    useEffect(() => {
+        const tr = termRender.peek()
+        const fs = fontSize.peek()
+        if (tr?.instance) {
+            const term = tr.instance
+            tr.instance.options.fontSize = fs
+            tr.fitAddon.fit()
+            doResize(term.cols, term.rows)
+        }
+    }, [fontSize.value]);
+
+    const clearScreen = () => {
+        const tr = termRender.peek()
+        if (tr?.instance && tr?.wsConn && tr.wsConn.readyState == WebSocket.OPEN) {
+            tr.instance.clear()
+        } else {
+            initTerminal(terminalRef).catch(console.error)
+        }
+    }
+
+    const setFontSize = (n: number) => {
+        if (n >= 7 && n <= 40)
+            fontSize.value = n
+    }
+
+    return {terminalRef, clearScreen, fontSize, setFontSize}
 }

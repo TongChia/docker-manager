@@ -55,11 +55,9 @@ export const ServiceIcon = () => (
     </svg>
 )
 
-export const TerminalIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" height="24px"
-         viewBox="0 -960 960 960" width="24px">
-        <path
-            d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-80h640v-400H160v400Zm140-40-56-56 103-104-104-104 57-56 160 160-160 160Zm180 0v-80h240v80H480Z"/>
+export const TerminalIcon = (props: SVGAttributes<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" {...props}>
+        <path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-80h640v-400H160v400Zm140-40-56-56 103-104-104-104 57-56 160 160-160 160Zm180 0v-80h240v80H480Z"/>
     </svg>
 )
 
@@ -92,6 +90,14 @@ export const CheckIcon = (props: SVGAttributes<SVGSVGElement>) => (
     </svg>
 )
 
+export const FileExportIcon = (props: SVGAttributes<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" {...props}><path d="m202-65-56-57 118-118h-90v-80h226v226h-80v-89L202-65Zm278-15v-320H160v-400q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H480Zm40-520h200L520-800l200 200-200-200v200Z"/></svg>
+)
+
+export const DraftIcon = (props: SVGAttributes<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" {...props}><path d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520h200L520-800v200Z"/></svg>
+)
+
 export const FolderIcon = (props: SVGAttributes<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" {...props}>
         <path
@@ -110,4 +116,12 @@ export const ChevronRightIcon = (props: SVGAttributes<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" {...props}>
         <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z"/>
     </svg>
+)
+
+export const RefreshIcon = (props: SVGAttributes<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" {...props}><path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z"/></svg>
+)
+
+export const RemoveIcon = (props: SVGAttributes<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" {...props}><path d="M200-440v-80h560v80H200Z"/></svg>
 )

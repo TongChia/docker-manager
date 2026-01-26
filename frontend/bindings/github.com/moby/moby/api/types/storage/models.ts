@@ -55,5 +55,95 @@ export class DriverData {
     }
 }
 
+/**
+ * RootFSStorage Information about the storage used for the container's root filesystem.
+ * 
+ * swagger:model RootFSStorage
+ */
+export class RootFSStorage {
+    /**
+     * Information about the snapshot used for the container's root filesystem.
+     */
+    "Snapshot"?: RootFSStorageSnapshot | null;
+
+    /** Creates a new RootFSStorage instance. */
+    constructor($$source: Partial<RootFSStorage> = {}) {
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new RootFSStorage instance from a string or object.
+     */
+    static createFrom($$source: any = {}): RootFSStorage {
+        const $$createField0_0 = $$createType2;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("Snapshot" in $$parsedSource) {
+            $$parsedSource["Snapshot"] = $$createField0_0($$parsedSource["Snapshot"]);
+        }
+        return new RootFSStorage($$parsedSource as Partial<RootFSStorage>);
+    }
+}
+
+/**
+ * RootFSStorageSnapshot Information about a snapshot backend of the container's root filesystem.
+ * 
+ * swagger:model RootFSStorageSnapshot
+ */
+export class RootFSStorageSnapshot {
+    /**
+     * Name of the snapshotter.
+     */
+    "Name"?: string;
+
+    /** Creates a new RootFSStorageSnapshot instance. */
+    constructor($$source: Partial<RootFSStorageSnapshot> = {}) {
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new RootFSStorageSnapshot instance from a string or object.
+     */
+    static createFrom($$source: any = {}): RootFSStorageSnapshot {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new RootFSStorageSnapshot($$parsedSource as Partial<RootFSStorageSnapshot>);
+    }
+}
+
+/**
+ * Storage Information about the storage used by the container.
+ * 
+ * swagger:model Storage
+ */
+export class Storage {
+    /**
+     * Information about the storage used for the container's root filesystem.
+     */
+    "RootFS"?: RootFSStorage | null;
+
+    /** Creates a new Storage instance. */
+    constructor($$source: Partial<Storage> = {}) {
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new Storage instance from a string or object.
+     */
+    static createFrom($$source: any = {}): Storage {
+        const $$createField0_0 = $$createType4;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("RootFS" in $$parsedSource) {
+            $$parsedSource["RootFS"] = $$createField0_0($$parsedSource["RootFS"]);
+        }
+        return new Storage($$parsedSource as Partial<Storage>);
+    }
+}
+
 // Private type creation functions
 const $$createType0 = $Create.Map($Create.Any, $Create.Any);
+const $$createType1 = RootFSStorageSnapshot.createFrom;
+const $$createType2 = $Create.Nullable($$createType1);
+const $$createType3 = RootFSStorage.createFrom;
+const $$createType4 = $Create.Nullable($$createType3);

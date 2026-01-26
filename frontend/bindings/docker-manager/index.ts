@@ -7,3 +7,8 @@ export {
     App,
     Term
 };
+
+export {
+    FileNode,
+    Layer
+} from "./models.js";

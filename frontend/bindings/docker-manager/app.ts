@@ -26,6 +26,10 @@ import * as network$0 from "../github.com/moby/moby/api/types/network/models.js"
 // @ts-ignore: Unused imports
 import * as client$0 from "../github.com/moby/moby/client/models.js";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
+import * as $models from "./models.js";
+
 /**
  * ContainerById 容器
  */
@@ -35,20 +39,28 @@ export function ContainerById(Id: string): $CancellablePromise<container$0.Summa
     });
 }
 
+export function ContainerFiles(cont: string): $CancellablePromise<$models.FileNode | null> {
+    return $Call.ByID(2216763055, cont).then(($result: any) => {
+        return $$createType3($result);
+    });
+}
+
 /**
  * ContainerList 容器列表
  */
 export function ContainerList(): $CancellablePromise<container$0.Summary[]> {
     return $Call.ByID(1783859960).then(($result: any) => {
-        return $$createType2($result);
+        return $$createType4($result);
     });
 }
 
 /**
  * ContainerLogs 容器日志
  */
-export function ContainerLogs(containerId: string): $CancellablePromise<void> {
-    return $Call.ByID(2148619475, containerId);
+export function ContainerLogs(cont: string): $CancellablePromise<string[]> {
+    return $Call.ByID(2148619475, cont).then(($result: any) => {
+        return $$createType5($result);
+    });
 }
 
 /**
@@ -56,29 +68,37 @@ export function ContainerLogs(containerId: string): $CancellablePromise<void> {
  */
 export function Greet(name: string): $CancellablePromise<events$0.Message | null> {
     return $Call.ByID(2659711170, name).then(($result: any) => {
-        return $$createType4($result);
+        return $$createType7($result);
     });
 }
 
-export function ImageFiles(id: string): $CancellablePromise<void> {
-    return $Call.ByID(1653876261, id);
+export function ImageFilesDive(image: string): $CancellablePromise<($models.Layer | null)[]> {
+    return $Call.ByID(545419287, image).then(($result: any) => {
+        return $$createType10($result);
+    });
 }
 
 export function ImageList(): $CancellablePromise<client$0.ImagesDiskUsage | null> {
     return $Call.ByID(3060495310).then(($result: any) => {
-        return $$createType6($result);
+        return $$createType12($result);
     });
 }
 
 export function ImageOne(id: string): $CancellablePromise<image$0.InspectResponse | null> {
     return $Call.ByID(3196724138, id).then(($result: any) => {
-        return $$createType8($result);
+        return $$createType14($result);
+    });
+}
+
+export function Mount(cont: string): $CancellablePromise<client$0.ContainerInspectResult | null> {
+    return $Call.ByID(310251842, cont).then(($result: any) => {
+        return $$createType16($result);
     });
 }
 
 export function NetworkList(): $CancellablePromise<network$0.Summary[]> {
     return $Call.ByID(1026609385).then(($result: any) => {
-        return $$createType10($result);
+        return $$createType18($result);
     });
 }
 
@@ -96,21 +116,29 @@ export function StopContainer(containerIds: string[]): $CancellablePromise<void>
 
 export function VolumeList(): $CancellablePromise<client$0.VolumesDiskUsage | null> {
     return $Call.ByID(162536207).then(($result: any) => {
-        return $$createType12($result);
+        return $$createType20($result);
     });
 }
 
 // Private type creation functions
 const $$createType0 = container$0.Summary.createFrom;
 const $$createType1 = $Create.Nullable($$createType0);
-const $$createType2 = $Create.Array($$createType0);
-const $$createType3 = events$0.Message.createFrom;
-const $$createType4 = $Create.Nullable($$createType3);
-const $$createType5 = client$0.ImagesDiskUsage.createFrom;
-const $$createType6 = $Create.Nullable($$createType5);
-const $$createType7 = image$0.InspectResponse.createFrom;
-const $$createType8 = $Create.Nullable($$createType7);
-const $$createType9 = network$0.Summary.createFrom;
+const $$createType2 = $models.FileNode.createFrom;
+const $$createType3 = $Create.Nullable($$createType2);
+const $$createType4 = $Create.Array($$createType0);
+const $$createType5 = $Create.Array($Create.Any);
+const $$createType6 = events$0.Message.createFrom;
+const $$createType7 = $Create.Nullable($$createType6);
+const $$createType8 = $models.Layer.createFrom;
+const $$createType9 = $Create.Nullable($$createType8);
 const $$createType10 = $Create.Array($$createType9);
-const $$createType11 = client$0.VolumesDiskUsage.createFrom;
+const $$createType11 = client$0.ImagesDiskUsage.createFrom;
 const $$createType12 = $Create.Nullable($$createType11);
+const $$createType13 = image$0.InspectResponse.createFrom;
+const $$createType14 = $Create.Nullable($$createType13);
+const $$createType15 = client$0.ContainerInspectResult.createFrom;
+const $$createType16 = $Create.Nullable($$createType15);
+const $$createType17 = network$0.Summary.createFrom;
+const $$createType18 = $Create.Array($$createType17);
+const $$createType19 = client$0.VolumesDiskUsage.createFrom;
+const $$createType20 = $Create.Nullable($$createType19);

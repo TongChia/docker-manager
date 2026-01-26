@@ -1,4 +1,4 @@
-import {h} from "preact";
+import {EventHandler, h, TargetedMouseEvent} from "preact";
 import {cx} from "../utils/classnames";
 import {useCallback, useState} from "preact/hooks";
 import {CheckIcon, CopyIcon} from "./icons";
@@ -22,25 +22,31 @@ function useCopyToClipboard() {
     return {copy, isCopied, error};
 }
 
-export const CopyText = ({text, copyText = text, className, right = false, ...rest}: {
+export const CopyText = ({text, copyText = text, className, right = false, clickIconOnly = false, ...rest}: {
     text?: string,
     copyText?: string,
     className?: string,
-    right?: boolean
+    right?: boolean,
+    clickIconOnly?: boolean,
 }) => {
+    if (!text) return ""
     const {copy, isCopied} = useCopyToClipboard()
-    return (text) ? (
+    const onClick: EventHandler<TargetedMouseEvent<HTMLDivElement>> = (e) => {
+        e.stopPropagation()
+        copy(copyText || text).catch(console.error)
+    }
+    return (
         <div className={cx("flex items-center gap-1 copy-text", {
             "flex-row-reverse": right,
             "copy-text-ok": isCopied
-        }, className)} {...rest} onClick={() => copy(copyText || text)}>
+        }, className)} {...rest} onClick={!clickIconOnly ? onClick : undefined}>
             <div className="overflow-hidden text-ellipsis">{text}</div>
-            <span className="copy-icon">
+            <span className="copy-icon" onClick={clickIconOnly ? onClick : undefined}>
                 {isCopied ?
                     <CheckIcon className="w-3.5 h-3.5 fill-success"/> :
                     <CopyIcon className="w-3.5 h-3.5 fill-current"/>
                 }
             </span>
         </div>
-    ) : ""
+    )
 }

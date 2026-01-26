@@ -1,15 +1,15 @@
 import {h} from "preact";
 import {compact, filter, find, fromPairs, join, map, pick, split, values} from "lodash";
-import {KVTable, PropTable} from "../components/PropTable";
-import {state} from "../states/image";
-import * as container from "../states/container";
-import {ImageOne} from "../../bindings/docker-manager/app";
+import {KVTable, PropTable} from "../../components/PropTable";
+import {state} from "../../states/image";
+import * as container from "../../states/container";
+import {ImageOne} from "../../../bindings/docker-manager/app";
 import {useCallback, useEffect, useState} from "preact/hooks";
-import {InspectResponse} from "../../bindings/github.com/moby/moby/api/types/image";
+import {InspectResponse} from "../../../bindings/github.com/moby/moby/api/types/image";
 import {RoutePropsForPath} from "preact-iso";
 
 
-export const ImageInfo = ({params}: RoutePropsForPath<"/:id/*">) => {
+export const InfoPage = ({params}: RoutePropsForPath<"/:id/*">) => {
     const img = find(state.value, {Id: params.id})
     const [inspect, setInspect] = useState<InspectResponse | null>()
     const used = img?.unused ? [] : filter(container.state.value, (c: container.$Container) => c.ImageID === img?.Id)
@@ -26,7 +26,7 @@ export const ImageInfo = ({params}: RoutePropsForPath<"/:id/*">) => {
     }, [fetchData])
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 p-4">
             <KVTable data={[
                 {key: "ID", value: img?.id, copyText: img?.Id},
                 {key: "Tag", value: img?.tag, copyable: true},

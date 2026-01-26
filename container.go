@@ -1,18 +1,18 @@
 package main
 
 import (
-	"context"
+	"archive/tar"
 	"errors"
 	"fmt"
+	"io"
 	"os/exec"
-	"time"
+	"path"
 
 	"github.com/moby/moby/api/types/container"
 	"github.com/moby/moby/client"
 	"github.com/samber/lo"
 	"github.com/samber/ro"
 	rostdio "github.com/samber/ro/plugins/stdio"
-	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
 // ContainerList 容器列表
@@ -28,9 +28,10 @@ func (a *App) ContainerList() ([]container.Summary, error) {
 
 // ContainerById 容器
 func (a *App) ContainerById(Id string) (*container.Summary, error) {
-	opt := client.ContainerListOptions{All: true}
-	opt.Filters = make(client.Filters).Add("id", Id)
-	r, err := a.cli.ContainerList(a.ctx, opt)
+	r, err := a.cli.ContainerList(a.ctx, client.ContainerListOptions{
+		All:     true,
+		Filters: make(client.Filters).Add("id", Id),
+	})
 	if err != nil {
 		a.log.Error(err.Error())
 		return nil, err
@@ -40,29 +41,34 @@ func (a *App) ContainerById(Id string) (*container.Summary, error) {
 }
 
 // ContainerLogs 容器日志
-func (a *App) ContainerLogs(containerId string) error {
-	eventName := fmt.Sprintf("Logs:%s", containerId)
-	ctx, cancel := context.WithCancel(a.ctx)
-	logio, err := a.cli.ContainerLogs(a.ctx, containerId, client.ContainerLogsOptions{})
+func (a *App) ContainerLogs(cont string) ([]string, error) {
+	logio, err := a.cli.ContainerLogs(a.ctx, cont, client.ContainerLogsOptions{
+		ShowStdout: true,
+		ShowStderr: true,
+		Timestamps: false,
+		Follow:     false,
+		Tail:       "1000",
+		Details:    true,
+	})
 	if err != nil {
-		cancel()
-		return err
+		return nil, err
 	}
 
-	a.app.Event.On(eventName, func(e *application.CustomEvent) {
-		cancel()
-	})
+	//ro.Pipe[[]byte, []byte](
+	//	rostdio.NewIOReaderLine(logio),
+	//	ro.ConcatAll[[]byte](),
+	//).SubscribeWithContext(a.ctx, ro.OnNext(func(line []byte) {
+	//
+	//}))
 
-	ro.Pipe[[]byte, []string](
-		rostdio.NewIOReaderLine(logio),
-		ro.Map(func(line []byte) string {
-			return string(line)
-		}),
-		ro.BufferWhen[string, int64](ro.Interval(200*time.Millisecond)),
-	).SubscribeWithContext(ctx, ro.OnNext(func(lines []string) {
-		a.app.Event.Emit(eventName, lines)
+	result := make([]string, 0)
+
+	rostdio.NewIOReaderLine(logio).SubscribeWithContext(a.ctx, ro.OnNext(func(line []byte) {
+		// TODO: line[8:] 前 8 个字节用来区分 Stdout 或 Stderr
+		result = append(result, string(line[8:]))
 	}))
-	return nil
+
+	return result, nil
 }
 
 func (a *App) StopContainer(containerIds []string) error {
@@ -95,4 +101,92 @@ func (a *App) OpenFolder(path string) error {
 	}
 	err := cmd.Run()
 	return err
+}
+
+func (a *App) Mount(cont string) (*client.ContainerInspectResult, error) {
+
+	inspect, err := a.cli.ContainerInspect(a.ctx, cont, client.ContainerInspectOptions{Size: false})
+	if err != nil {
+		return nil, err
+	}
+
+	//root := inspect.Container.Storage.RootFS
+	//a.log.Debug("container rootfs", "root", root)
+
+	return &inspect, nil
+}
+
+//type FileInfo struct {
+//	Name    string      // 文件名
+//	Path    string      // 路径
+//	Size    int64       // 文件大小（目录为 0）
+//	Mode    fs.FileMode // Type flag
+//	ModTime int64       // 修改时间（Unix 纳秒）
+//	Files   []*FileInfo
+//	//Mode     int64       // 文件模式（权限 + 类型）
+//	//isDar  bool        // 是否为目录
+//}
+
+func (a *App) ContainerFiles(cont string) (*FileNode, error) {
+	l := a.log.WithGroup("ContainerFiles")
+	r, err := a.cli.CopyFromContainer(a.ctx, cont, client.CopyFromContainerOptions{SourcePath: "/"})
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if err := r.Content.Close(); err != nil {
+			l.Error("failed to close container tar reader", "err", err)
+		}
+	}()
+	tarReader := tar.NewReader(r.Content)
+
+	var filesTree = make(map[string]*FileNode)
+	var rootFiles *FileNode = nil
+	//var count int = 0
+
+	for {
+		//if count > 100 {
+		//	break
+		//}
+		//count++
+		header, err := tarReader.Next()
+		if err == io.EOF {
+			break // 列表结束
+		}
+		if err != nil {
+			return nil, fmt.Errorf("tar read error: %w", err)
+		}
+
+		isDar := header.Typeflag == tar.TypeDir
+		fsInfo := header.FileInfo()
+		filePath, baseName := path.Split(path.Clean(header.Name))
+
+		info := &FileNode{
+			Name:     baseName,
+			Path:     filePath,
+			Size:     header.Size,
+			TypeFlag: header.Typeflag,
+			Linkname: header.Linkname,
+			Mode:     fsInfo.Mode(),
+			ModTime:  header.ModTime.UnixMilli(),
+			IsDir:    fsInfo.IsDir(),
+		}
+
+		if rootFiles == nil {
+			rootFiles = info
+			filesTree[header.Name] = info
+			continue
+		}
+
+		if isDar {
+			info.Children = make([]*FileNode, 0)
+			filesTree[header.Name] = info
+		}
+
+		if parentNode, ok := filesTree[filePath]; ok {
+			parentNode.Children = append(parentNode.Children, info)
+		}
+	}
+
+	return rootFiles, nil
 }
