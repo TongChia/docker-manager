@@ -67,7 +67,7 @@ export function Containers(props: any) {
                     <ShareBtn/>
                 </nav>
 
-                <div className="overflow-y-scroll grow">
+                <div className="overflow-y-auto grow">
                     <Router>
                         <Route component={InfoPage} path="/info"/>
                         <Route component={LogsPage} path="/logs"/>

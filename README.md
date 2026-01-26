@@ -1,19 +1,58 @@
-# README
-
 ## About
 
-This is the official Wails Preact-TS template.
+A docker manager that mimics OrbStack, created purely out of personal interest.   
 
-You can configure the project by editing `wails.json`. More information about the project settings can be found
-here: https://wails.io/docs/reference/project-config
+![截屏2026-01-26 22.22.38.png](docs/assets/%E6%88%AA%E5%B1%8F2026-01-26%2022.22.38.png)
 
-## Live Development
 
-To run in live development mode, run `wails dev` in the project directory. This will run a Vite development
-server that will provide very fast hot reload of your frontend changes. If you want to develop in a browser
-and have access to your Go methods, there is also a dev server that runs on http://localhost:34115. Connect
-to this in your browser, and you can call your Go code from devtools.
+## Features
+- main 
+  - image files ([dive](https://github.com/wagoodman/dive)) 
 
-## Building
+![录屏2026-01-26 21.17.06.gif](docs/assets/%E5%BD%95%E5%B1%8F2026-01-26%2021.17.06.gif)
 
-To build a redistributable, production mode package, use `wails build`.
+- term  
+
+![录屏2026-01-26 21.25.17.gif](docs/assets/%E5%BD%95%E5%B1%8F2026-01-26%2021.25.17.gif)
+
+
+## Development
+
+To run in live development mode, run `wails3 dev` in the project directory. This will run a Vite development
+server that will provide very fast hot reload of your frontend changes.
+
+To build a redistributable, production mode package, use `wails3 build`.
+
+Technology stack:
+- Golang
+  - [Wails3](https://v3alpha.wails.io/)
+  - [docker SDK (moby)](https://pkg.go.dev/github.com/moby/docker/client)
+  - [Dive](https://github.com/wagoodman/dive)
+- Frontend
+  - [Preact](https://preactjs.com/)
+  - [Tailwind CSS](https://tailwindcss.com/)
+  - [daisyUI](https://daisyui.com/docs/intro/)
+
+
+## TODOs
+- containers
+  - [ ] create container
+    - [ ] list local images
+    - [ ] pull image from dockerhub
+  - [ ] remove container
+  - [ ] export container files
+- images
+  - [ ] add image
+    - [ ] pull image from dockerhub
+    - [ ] build image from Dockerfile
+  - [ ] remove image
+  - [ ] export image files
+- volumes
+  - [ ] create volume
+  - [ ] remove volume
+  - [ ] show | export volume files
+- networks
+  - [ ] create network
+  - [ ] remove network
+- remote docker host
+  - [ ] connect docker host by SSH

@@ -64,10 +64,10 @@ export function Volumes(props: RoutePropsForPath<"/:id/*">) {
                 <nav className="navbar w-full grow-0 flex justify-between px-4">
                     <PlusBtn/>
                     <div role="tablist" className="tabs tabs-box capitalize">
-                        {map(["info", "files"], (tab) => (
-                            <a key={tab} role="tab" className={cx("tab w-18", {"tab-active": props.rest == `/${tab}`})}
-                               href={tab}>{tab}</a>
-                        ))}
+                        {/*{map(["info", "files"], (tab) => (*/}
+                        {/*    <a key={tab} role="tab" className={cx("tab w-18", {"tab-active": props.rest == `/${tab}`})}*/}
+                        {/*       href={tab}>{tab}</a>*/}
+                        {/*))}*/}
                     </div>
                     <ShareBtn/>
                 </nav>
