@@ -9,6 +9,7 @@ export {
 };
 
 export {
+    CreateContainerParams,
     FileNode,
     Layer
 } from "./models.js";

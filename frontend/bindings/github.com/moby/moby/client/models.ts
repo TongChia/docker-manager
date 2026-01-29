@@ -19,6 +19,38 @@ import * as image$0 from "../api/types/image/models.js";
 import * as volume$0 from "../api/types/volume/models.js";
 
 /**
+ * ContainerCreateResult is the result from creating a container.
+ */
+export class ContainerCreateResult {
+    "ID": string;
+    "Warnings": string[];
+
+    /** Creates a new ContainerCreateResult instance. */
+    constructor($$source: Partial<ContainerCreateResult> = {}) {
+        if (!("ID" in $$source)) {
+            this["ID"] = "";
+        }
+        if (!("Warnings" in $$source)) {
+            this["Warnings"] = [];
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new ContainerCreateResult instance from a string or object.
+     */
+    static createFrom($$source: any = {}): ContainerCreateResult {
+        const $$createField1_0 = $$createType0;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("Warnings" in $$parsedSource) {
+            $$parsedSource["Warnings"] = $$createField1_0($$parsedSource["Warnings"]);
+        }
+        return new ContainerCreateResult($$parsedSource as Partial<ContainerCreateResult>);
+    }
+}
+
+/**
  * ContainerInspectResult holds the result from the [Client.ConfigInspect] method.
  */
 export class ContainerInspectResult {
@@ -41,7 +73,7 @@ export class ContainerInspectResult {
      * Creates a new ContainerInspectResult instance from a string or object.
      */
     static createFrom($$source: any = {}): ContainerInspectResult {
-        const $$createField0_0 = $$createType0;
+        const $$createField0_0 = $$createType1;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("Container" in $$parsedSource) {
             $$parsedSource["Container"] = $$createField0_0($$parsedSource["Container"]);
@@ -104,7 +136,7 @@ export class ImagesDiskUsage {
      * Creates a new ImagesDiskUsage instance from a string or object.
      */
     static createFrom($$source: any = {}): ImagesDiskUsage {
-        const $$createField4_0 = $$createType2;
+        const $$createField4_0 = $$createType3;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("Items" in $$parsedSource) {
             $$parsedSource["Items"] = $$createField4_0($$parsedSource["Items"]);
@@ -167,7 +199,7 @@ export class VolumesDiskUsage {
      * Creates a new VolumesDiskUsage instance from a string or object.
      */
     static createFrom($$source: any = {}): VolumesDiskUsage {
-        const $$createField4_0 = $$createType4;
+        const $$createField4_0 = $$createType5;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("Items" in $$parsedSource) {
             $$parsedSource["Items"] = $$createField4_0($$parsedSource["Items"]);
@@ -177,8 +209,9 @@ export class VolumesDiskUsage {
 }
 
 // Private type creation functions
-const $$createType0 = container$0.InspectResponse.createFrom;
-const $$createType1 = image$0.Summary.createFrom;
-const $$createType2 = $Create.Array($$createType1);
-const $$createType3 = volume$0.Volume.createFrom;
-const $$createType4 = $Create.Array($$createType3);
+const $$createType0 = $Create.Array($Create.Any);
+const $$createType1 = container$0.InspectResponse.createFrom;
+const $$createType2 = image$0.Summary.createFrom;
+const $$createType3 = $Create.Array($$createType2);
+const $$createType4 = volume$0.Volume.createFrom;
+const $$createType5 = $Create.Array($$createType4);

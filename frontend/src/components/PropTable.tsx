@@ -83,7 +83,7 @@ export const PortTable = ({data}: { data: PortSummary[] }) => {
                     {map(data, (p, k) => (
                         <tr key={`port-${k}`}>
                             {/*TODO: 打开浏览器链接*/}
-                            <td><CopyText text={String(p.PublicPort)}/></td>
+                            <td>{p.PublicPort ? <CopyText text={String(p.PublicPort)}/> : "None"}</td>
                             <td>{p.PrivatePort}</td>
                             <td className="uppercase">{p.Type}</td>
                         </tr>

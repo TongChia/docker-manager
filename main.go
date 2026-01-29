@@ -24,7 +24,7 @@ func main() {
 		LogLevel: slog.LevelDebug,
 	})
 
-	app.Window.NewWithOptions(application.WebviewWindowOptions{
+	win := app.Window.NewWithOptions(application.WebviewWindowOptions{
 		Title:     "Docker Manager",
 		Width:     1024,
 		Height:    768,
@@ -43,7 +43,7 @@ func main() {
 		},
 	})
 
-	app.RegisterService(application.NewService(NewApp(app)))
+	app.RegisterService(application.NewService(NewApp(app, win)))
 	app.RegisterService(application.NewService(NewTerm(app)))
 
 	err := app.Run()

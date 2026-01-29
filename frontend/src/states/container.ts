@@ -63,8 +63,8 @@ export class $Container extends Summary implements $Summary {
                 return "paused"
             case "exited":
             case "dead":
-                return "stopped"
             case "created":
+                return "stopped"
             case "restarting":
             case "removing":
             default:
@@ -130,7 +130,7 @@ export const update = () => ContainerList().then((list) => {
 
 export const addOne = (Id: string) => ContainerById(Id).then(item => {
     if (item)
-        state.value = concat(state.peek(), new $Container(item))
+        state.value = concat([new $Container(item)], state.peek())
 })
 
 export const updateOne = (Id: string) => ContainerById(Id).then(item => {

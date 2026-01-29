@@ -56,3 +56,4 @@ Technology stack:
   - [ ] remove network
 - remote docker host
   - [ ] connect docker host by SSH
+- Kubernetes

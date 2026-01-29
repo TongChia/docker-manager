@@ -7,10 +7,86 @@ import { Create as $Create } from "@wailsio/runtime";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: Unused imports
+import * as container$0 from "../github.com/moby/moby/api/types/container/models.js";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
 import * as filetree$0 from "../github.com/wagoodman/dive/dive/filetree/models.js";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: Unused imports
 import * as fs$0 from "../io/fs/models.js";
+
+export class CreateContainerParams {
+    "name": string;
+    "image": string;
+    "platform": string;
+    "rm": boolean;
+    "startUp": boolean;
+    "restart": container$0.RestartPolicyMode;
+
+    /**
+     * Payload
+     */
+    "cmd": string;
+    "entrypoint": string;
+    "workdir": string;
+
+    /**
+     * Advanced
+     */
+    "privileged": boolean;
+    "read-only": boolean;
+    "init": boolean;
+
+    /** Creates a new CreateContainerParams instance. */
+    constructor($$source: Partial<CreateContainerParams> = {}) {
+        if (!("name" in $$source)) {
+            this["name"] = "";
+        }
+        if (!("image" in $$source)) {
+            this["image"] = "";
+        }
+        if (!("platform" in $$source)) {
+            this["platform"] = "";
+        }
+        if (!("rm" in $$source)) {
+            this["rm"] = false;
+        }
+        if (!("startUp" in $$source)) {
+            this["startUp"] = false;
+        }
+        if (!("restart" in $$source)) {
+            this["restart"] = container$0.RestartPolicyMode.$zero;
+        }
+        if (!("cmd" in $$source)) {
+            this["cmd"] = "";
+        }
+        if (!("entrypoint" in $$source)) {
+            this["entrypoint"] = "";
+        }
+        if (!("workdir" in $$source)) {
+            this["workdir"] = "";
+        }
+        if (!("privileged" in $$source)) {
+            this["privileged"] = false;
+        }
+        if (!("read-only" in $$source)) {
+            this["read-only"] = false;
+        }
+        if (!("init" in $$source)) {
+            this["init"] = false;
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new CreateContainerParams instance from a string or object.
+     */
+    static createFrom($$source: any = {}): CreateContainerParams {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new CreateContainerParams($$parsedSource as Partial<CreateContainerParams>);
+    }
+}
 
 /**
  * FileNode filetree.FileNode 有循环嵌套结构，不利于传输。

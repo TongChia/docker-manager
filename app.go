@@ -12,17 +12,20 @@ import (
 
 // App struct
 type App struct {
-	app *application.App
-	ctx context.Context
-	log *slog.Logger
-	cli *APIClient
-	bus ro.Subject[events.Message]
+	app    *application.App
+	win    *application.WebviewWindow
+	dialog *application.WebviewWindow
+	log    *slog.Logger
+	cli    *APIClient
+	ctx    context.Context
+	bus    ro.Subject[events.Message]
 }
 
 // NewApp creates a new App application struct
-func NewApp(app *application.App) *App {
+func NewApp(app *application.App, win *application.WebviewWindow) *App {
 	return &App{
 		app: app,
+		win: win,
 		log: app.Logger.WithGroup("App"),
 		bus: ro.NewPublishSubject[events.Message](),
 	}
@@ -48,8 +51,7 @@ func (a *App) ServiceShutdown() error {
 	return nil
 }
 
-// Greet returns a greeting for the given name
-func (a *App) Greet(name string) *events.Message {
-	a.log.Info(fmt.Sprintf("Hello %s, It's show time!", name))
+func (a *App) ExportType() *events.Message {
+	a.log.Warn("Meaningless!")
 	return nil
 }

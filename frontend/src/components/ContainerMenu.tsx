@@ -8,6 +8,7 @@ import {cx} from "../utils/classnames";
 import {useRoute} from "preact-iso";
 import {ContainerFillIcon, StackIcon} from "./icons";
 import {memoizeColor, randomColor} from "../utils/theme";
+import {RemoveContainer} from "../../bindings/docker-manager/app";
 
 export const ContainerDropdown = ({data}: { data: $Compose }) => {
     const {params, path} = useRoute()
@@ -51,6 +52,9 @@ export const ContainerItem = ({data}: { data: $Container }) => {
     const onClick = () => {
         execStartOrStop([data.id], isStop)
     }
+    const onClickDel = () => {
+        RemoveContainer(data.id).catch(console.error)
+    }
 
     return (
         <li className={cx({"disabled": isStop})}>
@@ -68,7 +72,7 @@ export const ContainerItem = ({data}: { data: $Container }) => {
             <span>
                 {map(data.urls, url => <LinkBtn url={url}/>)}
                 <PlayBtn state={data.state} onClick={onClick}/>
-                <DeleteBtn/>
+                <DeleteBtn onClick={onClickDel}/>
             </span>
             </span>
         </li>

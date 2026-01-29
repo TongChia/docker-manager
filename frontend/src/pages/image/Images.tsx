@@ -36,7 +36,7 @@ export function Images(props: any) {
                 {/* Navbar */}
                 <nav className="navbar w-full bg-base-300 grow-0 flex justify-between">
                     <div className="px-4">
-                        <p className="font-bold">Volumes</p>
+                        <p className="font-bold">Images</p>
                         <p className="text-xs text-base-content/50">{totalSize} total</p>
                     </div>
                 </nav>

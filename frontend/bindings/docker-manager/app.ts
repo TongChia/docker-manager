@@ -63,47 +63,58 @@ export function ContainerLogs(cont: string): $CancellablePromise<string[]> {
     });
 }
 
-/**
- * Greet returns a greeting for the given name
- */
-export function Greet(name: string): $CancellablePromise<events$0.Message | null> {
-    return $Call.ByID(2659711170, name).then(($result: any) => {
-        return $$createType7($result);
+export function CreateContainer(params: $models.CreateContainerParams): $CancellablePromise<client$0.ContainerCreateResult> {
+    return $Call.ByID(2559263320, params).then(($result: any) => {
+        return $$createType6($result);
+    });
+}
+
+export function CreateContainerDialog(actionId: string): $CancellablePromise<boolean> {
+    return $Call.ByID(2521581528, actionId);
+}
+
+export function ExportType(): $CancellablePromise<events$0.Message | null> {
+    return $Call.ByID(916175267).then(($result: any) => {
+        return $$createType8($result);
     });
 }
 
 export function ImageFilesDive(image: string): $CancellablePromise<($models.Layer | null)[]> {
     return $Call.ByID(545419287, image).then(($result: any) => {
-        return $$createType10($result);
+        return $$createType11($result);
     });
 }
 
 export function ImageList(): $CancellablePromise<client$0.ImagesDiskUsage | null> {
     return $Call.ByID(3060495310).then(($result: any) => {
-        return $$createType12($result);
+        return $$createType13($result);
     });
 }
 
 export function ImageOne(id: string): $CancellablePromise<image$0.InspectResponse | null> {
     return $Call.ByID(3196724138, id).then(($result: any) => {
-        return $$createType14($result);
+        return $$createType15($result);
     });
 }
 
 export function Mount(cont: string): $CancellablePromise<client$0.ContainerInspectResult | null> {
     return $Call.ByID(310251842, cont).then(($result: any) => {
-        return $$createType16($result);
+        return $$createType17($result);
     });
 }
 
 export function NetworkList(): $CancellablePromise<network$0.Summary[]> {
     return $Call.ByID(1026609385).then(($result: any) => {
-        return $$createType18($result);
+        return $$createType19($result);
     });
 }
 
 export function OpenFolder(path: string): $CancellablePromise<void> {
     return $Call.ByID(3894305329, path);
+}
+
+export function RemoveContainer(cont: string): $CancellablePromise<void> {
+    return $Call.ByID(3139333464, cont);
 }
 
 export function StartContainer(containerIds: string[]): $CancellablePromise<void> {
@@ -116,7 +127,7 @@ export function StopContainer(containerIds: string[]): $CancellablePromise<void>
 
 export function VolumeList(): $CancellablePromise<client$0.VolumesDiskUsage | null> {
     return $Call.ByID(162536207).then(($result: any) => {
-        return $$createType20($result);
+        return $$createType21($result);
     });
 }
 
@@ -127,18 +138,19 @@ const $$createType2 = $models.FileNode.createFrom;
 const $$createType3 = $Create.Nullable($$createType2);
 const $$createType4 = $Create.Array($$createType0);
 const $$createType5 = $Create.Array($Create.Any);
-const $$createType6 = events$0.Message.createFrom;
-const $$createType7 = $Create.Nullable($$createType6);
-const $$createType8 = $models.Layer.createFrom;
-const $$createType9 = $Create.Nullable($$createType8);
-const $$createType10 = $Create.Array($$createType9);
-const $$createType11 = client$0.ImagesDiskUsage.createFrom;
-const $$createType12 = $Create.Nullable($$createType11);
-const $$createType13 = image$0.InspectResponse.createFrom;
-const $$createType14 = $Create.Nullable($$createType13);
-const $$createType15 = client$0.ContainerInspectResult.createFrom;
-const $$createType16 = $Create.Nullable($$createType15);
-const $$createType17 = network$0.Summary.createFrom;
-const $$createType18 = $Create.Array($$createType17);
-const $$createType19 = client$0.VolumesDiskUsage.createFrom;
-const $$createType20 = $Create.Nullable($$createType19);
+const $$createType6 = client$0.ContainerCreateResult.createFrom;
+const $$createType7 = events$0.Message.createFrom;
+const $$createType8 = $Create.Nullable($$createType7);
+const $$createType9 = $models.Layer.createFrom;
+const $$createType10 = $Create.Nullable($$createType9);
+const $$createType11 = $Create.Array($$createType10);
+const $$createType12 = client$0.ImagesDiskUsage.createFrom;
+const $$createType13 = $Create.Nullable($$createType12);
+const $$createType14 = image$0.InspectResponse.createFrom;
+const $$createType15 = $Create.Nullable($$createType14);
+const $$createType16 = client$0.ContainerInspectResult.createFrom;
+const $$createType17 = $Create.Nullable($$createType16);
+const $$createType18 = network$0.Summary.createFrom;
+const $$createType19 = $Create.Array($$createType18);
+const $$createType20 = client$0.VolumesDiskUsage.createFrom;
+const $$createType21 = $Create.Nullable($$createType20);

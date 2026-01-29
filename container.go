@@ -7,12 +7,15 @@ import (
 	"io"
 	"os/exec"
 	"path"
+	"strings"
 
 	"github.com/moby/moby/api/types/container"
 	"github.com/moby/moby/client"
+	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/samber/lo"
 	"github.com/samber/ro"
 	rostdio "github.com/samber/ro/plugins/stdio"
+	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
 // ContainerList 容器列表
@@ -189,4 +192,105 @@ func (a *App) ContainerFiles(cont string) (*FileNode, error) {
 	}
 
 	return rootFiles, nil
+}
+
+func (a *App) CreateContainerDialog(actionId string) bool {
+	if a.dialog != nil {
+		a.dialog.Show()
+	}
+	dialog := a.app.Window.NewWithOptions(application.WebviewWindowOptions{
+		Name:        fmt.Sprintf("Create Container (%s)", actionId),
+		Title:       "Create Container",
+		Width:       460,
+		Height:      815,
+		AlwaysOnTop: true,
+		Frameless:   true,
+		Hidden:      true,
+	})
+
+	// Pass message to dialog
+	//dialog.OnReady(func() {
+	//	dialog.EmitEvent("set-message", message)
+	//})
+
+	a.app.Event.On("dialog:CreateContainerDialog:close", func(e *application.CustomEvent) {
+		dialog.Close()
+	})
+	dialog.SetURL("wails://localhost:9245/nested/create_container/index.html")
+	dialog.Show()
+
+	a.dialog = dialog
+	return true
+}
+
+type CreateContainerParams struct {
+	Name       string `json:"name"`
+	Image      string `json:"image"`
+	Platform   string `json:"platform"`
+	AutoRemove bool   `json:"rm"`
+	StartUp    bool   `json:"startUp"`
+
+	RestartPolicy container.RestartPolicyMode `json:"restart"`
+
+	// Payload
+	Cmd        string `json:"cmd"`
+	Entrypoint string `json:"entrypoint"`
+	WorkingDir string `json:"workdir"`
+
+	// Advanced
+	Privileged     bool `json:"privileged"`
+	ReadonlyRootfs bool `json:"read-only"`
+	Init           bool `json:"init"`
+}
+
+func (a *App) CreateContainer(params CreateContainerParams) (client.ContainerCreateResult, error) {
+	r, err := a.cli.ContainerCreate(a.ctx, client.ContainerCreateOptions{
+		Name: params.Name,
+		Config: &container.Config{
+			ExposedPorts: nil, // TODO
+			Env:          nil, // TODO
+			Cmd:          splitCmd(params.Cmd),
+			Image:        params.Image,
+			Volumes:      nil, // TODO
+			WorkingDir:   params.WorkingDir,
+			Entrypoint:   splitCmd(params.Entrypoint),
+		},
+		HostConfig: &container.HostConfig{
+			PortBindings: nil, // TODO
+			RestartPolicy: container.RestartPolicy{
+				Name: params.RestartPolicy,
+			},
+			AutoRemove:     params.AutoRemove,
+			Privileged:     params.Privileged,
+			ReadonlyRootfs: params.ReadonlyRootfs,
+			Init:           &params.Init,
+		},
+		Platform: &ocispec.Platform{
+			Architecture: params.Platform,
+			OS:           "linux", // TODO: windows
+		},
+	})
+	if err == nil && params.StartUp {
+		_, err := a.cli.ContainerStart(a.ctx, r.ID, client.ContainerStartOptions{})
+		if err != nil {
+			return r, err
+
+		}
+	}
+	return r, err
+}
+
+func splitCmd(str string) []string {
+	if str == "" {
+		return nil
+	} else {
+		return strings.Split(str, " ")
+	}
+}
+
+func (a *App) RemoveContainer(cont string) error {
+	_, err := a.cli.ContainerRemove(a.ctx, cont, client.ContainerRemoveOptions{
+		Force: false,
+	})
+	return err
 }

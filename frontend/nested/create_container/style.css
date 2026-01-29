@@ -1,0 +1,10 @@
+@import "tailwindcss";
+@plugin "daisyui" {
+    root: ":root";
+    themes: all;
+    logs: true;
+}
+
+.header {
+    --wails-draggable: drag;
+}

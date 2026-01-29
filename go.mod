@@ -7,6 +7,7 @@ require (
 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674
 	github.com/moby/moby/api v1.52.0
 	github.com/moby/moby/client v0.2.1
+	github.com/opencontainers/image-spec v1.1.1
 	github.com/samber/lo v1.52.0
 	github.com/samber/ro v0.2.0
 	github.com/samber/ro/plugins/stdio v0.0.0-20260110205613-a6ee93928797
@@ -71,7 +72,6 @@ require (
 	github.com/moby/sys/atomicwriter v0.1.0 // indirect
 	github.com/moby/sys/sequential v0.6.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
-	github.com/opencontainers/image-spec v1.1.1 // indirect
 	github.com/phayes/permbits v0.0.0-20190612203442-39d7c581d2ee // indirect
 	github.com/pjbgf/sha1cd v0.5.0 // indirect
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c // indirect

@@ -9,7 +9,7 @@
 
 html {
     background-color: rgba(0, 0, 0, 0);
-    scrollbar-color: color-mix(in oklch, currentColor 20%, #0000) #0000;
+    /*scrollbar-color: color-mix(in oklch, currentColor 20%, #0000) #0000;*/
     scrollbar-width: thin;
 }
 

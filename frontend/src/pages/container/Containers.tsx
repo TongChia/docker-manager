@@ -12,6 +12,8 @@ import {FilesPage} from "./FilesPage";
 import {LogsPage} from "./LogsPage";
 import {Group, Panel, Separator, useDefaultLayout} from "react-resizable-panels";
 import {Loading} from "../../components/Loading";
+import {CreateContainerDialog} from "../../../bindings/docker-manager/app";
+import {memoizeUUID} from "../../utils/uuid";
 
 export function Containers(props: any) {
     const {defaultLayout, onLayoutChanged} = useDefaultLayout({
@@ -25,6 +27,12 @@ export function Containers(props: any) {
         update().catch(console.error).finally(() => setLoading(false))
         return listen()
     }, []);
+
+    const onClickPlusBtn = () => {
+        CreateContainerDialog("create container").catch(console.error).finally(() => {
+            console.debug("Opening compose file...")
+        })
+    }
 
     return (
         // <div className="drawer-content h-dvh grid grid-cols-[max-content_auto]">
@@ -57,7 +65,7 @@ export function Containers(props: any) {
                        aria-orientation="horizontal"/>
             <Panel id="containers-tabs" className="h-dvh flex flex-col bg-base-100">
                 <nav className="navbar w-full grow-0 flex justify-between px-4">
-                    <PlusBtn/>
+                    <PlusBtn onClick={onClickPlusBtn}/>
                     <div role="tablist" className="tabs tabs-box capitalize">
                         {map(["info", "logs", "terminal", "files"], (tab) => (
                             <a key={tab} role="tab" className={cx("tab w-18", {"tab-active": props.rest == `/${tab}`})}
