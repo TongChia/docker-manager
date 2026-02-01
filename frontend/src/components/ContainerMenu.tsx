@@ -9,17 +9,25 @@ import {useRoute} from "preact-iso";
 import {ContainerFillIcon, StackIcon} from "./icons";
 import {memoizeColor, randomColor} from "../utils/theme";
 import {RemoveContainer} from "../../bindings/docker-manager/app";
+import {useDialogMask} from "../states/theme";
 
 export const ContainerDropdown = ({data}: { data: $Compose }) => {
     const {params, path} = useRoute()
     const [open, setOpen] = useState(false)
     const isSelected = data.id == params.id
     const isStop = data.state == "stopped"
+    const [_, setDialog] = useDialogMask()
 
     const onClickPlayBtn: EventHandler<TargetedEvent> = (event) => {
         event.stopPropagation() // 阻止事件冒泡
         event.preventDefault()
         execStartOrStop(map(data.items, "id"), isStop)
+    }
+    const onClickDelBtn: EventHandler<TargetedEvent> = (event) => {
+        event.stopPropagation()
+        event.preventDefault()
+        setDialog(true)
+        RemoveContainer(map(data.items, "id"), true).catch(console.error).finally(() => setDialog(false))
     }
 
     return (
@@ -33,7 +41,7 @@ export const ContainerDropdown = ({data}: { data: $Compose }) => {
                     </a>
                     <span>
                         <PlayBtn state={data.state} onClick={onClickPlayBtn}/>
-                        <DeleteBtn/>
+                        <DeleteBtn onClick={onClickDelBtn}/>
                     </span>
                 </summary>
                 <ul>
@@ -49,11 +57,11 @@ export const ContainerItem = ({data}: { data: $Container }) => {
     const isSelected = data.id == params.id
     const isStop = data.state == "stopped"
 
-    const onClick = () => {
+    const onClickPlayBtn = () => {
         execStartOrStop([data.id], isStop)
     }
-    const onClickDel = () => {
-        RemoveContainer(data.id).catch(console.error)
+    const onClickDelBtn = () => {
+        RemoveContainer([data.id], true).catch(console.error)
     }
 
     return (
@@ -71,8 +79,8 @@ export const ContainerItem = ({data}: { data: $Container }) => {
             </a>
             <span>
                 {map(data.urls, url => <LinkBtn url={url}/>)}
-                <PlayBtn state={data.state} onClick={onClick}/>
-                <DeleteBtn onClick={onClickDel}/>
+                <PlayBtn state={data.state} onClick={onClickPlayBtn}/>
+                <DeleteBtn onClick={onClickDelBtn}/>
             </span>
             </span>
         </li>

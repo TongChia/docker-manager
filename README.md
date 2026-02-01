@@ -36,11 +36,12 @@ Technology stack:
 
 ## TODOs
 - containers
-  - [ ] create container
+  - [x] create container
     - [ ] list local images
     - [ ] pull image from dockerhub
-  - [ ] remove container
+  - [x] remove container
   - [ ] export container files
+  - [ ] export noVNC
 - images
   - [ ] add image
     - [ ] pull image from dockerhub
@@ -57,3 +58,5 @@ Technology stack:
 - remote docker host
   - [ ] connect docker host by SSH
 - Kubernetes
+- Settings
+  - [ ] theme

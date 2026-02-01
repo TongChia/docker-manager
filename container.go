@@ -16,6 +16,8 @@ import (
 	"github.com/samber/ro"
 	rostdio "github.com/samber/ro/plugins/stdio"
 	"github.com/wailsapp/wails/v3/pkg/application"
+	"github.com/wailsapp/wails/v3/pkg/events"
+	//"github.com/wailsapp/wails/v3/pkg/events"
 )
 
 // ContainerList 容器列表
@@ -195,9 +197,6 @@ func (a *App) ContainerFiles(cont string) (*FileNode, error) {
 }
 
 func (a *App) CreateContainerDialog(actionId string) bool {
-	if a.dialog != nil {
-		a.dialog.Show()
-	}
 	dialog := a.app.Window.NewWithOptions(application.WebviewWindowOptions{
 		Name:        fmt.Sprintf("Create Container (%s)", actionId),
 		Title:       "Create Container",
@@ -208,19 +207,16 @@ func (a *App) CreateContainerDialog(actionId string) bool {
 		Hidden:      true,
 	})
 
-	// Pass message to dialog
-	//dialog.OnReady(func() {
-	//	dialog.EmitEvent("set-message", message)
-	//})
-
-	a.app.Event.On("dialog:CreateContainerDialog:close", func(e *application.CustomEvent) {
+	r := make(chan bool)
+	a.app.Event.OnMultiple(fmt.Sprintf("dialog:%s:close", dialog.Name()), func(e *application.CustomEvent) {
+		r <- true
 		dialog.Close()
-	})
+	}, 1)
+
 	dialog.SetURL("wails://localhost:9245/nested/create_container/index.html")
 	dialog.Show()
 
-	a.dialog = dialog
-	return true
+	return <-r
 }
 
 type CreateContainerParams struct {
@@ -243,34 +239,34 @@ type CreateContainerParams struct {
 	Init           bool `json:"init"`
 }
 
-func (a *App) CreateContainer(params CreateContainerParams) (client.ContainerCreateResult, error) {
+func (a *App) CreateContainer(p CreateContainerParams) (client.ContainerCreateResult, error) {
 	r, err := a.cli.ContainerCreate(a.ctx, client.ContainerCreateOptions{
-		Name: params.Name,
+		Name: p.Name,
 		Config: &container.Config{
 			ExposedPorts: nil, // TODO
 			Env:          nil, // TODO
-			Cmd:          splitCmd(params.Cmd),
-			Image:        params.Image,
+			Cmd:          splitCmd(p.Cmd),
+			Image:        p.Image,
 			Volumes:      nil, // TODO
-			WorkingDir:   params.WorkingDir,
-			Entrypoint:   splitCmd(params.Entrypoint),
+			WorkingDir:   p.WorkingDir,
+			Entrypoint:   splitCmd(p.Entrypoint),
 		},
 		HostConfig: &container.HostConfig{
 			PortBindings: nil, // TODO
 			RestartPolicy: container.RestartPolicy{
-				Name: params.RestartPolicy,
+				Name: p.RestartPolicy,
 			},
-			AutoRemove:     params.AutoRemove,
-			Privileged:     params.Privileged,
-			ReadonlyRootfs: params.ReadonlyRootfs,
-			Init:           &params.Init,
+			AutoRemove:     p.AutoRemove,
+			Privileged:     p.Privileged,
+			ReadonlyRootfs: p.ReadonlyRootfs,
+			Init:           &p.Init,
 		},
 		Platform: &ocispec.Platform{
-			Architecture: params.Platform,
+			Architecture: p.Platform,
 			OS:           "linux", // TODO: windows
 		},
 	})
-	if err == nil && params.StartUp {
+	if err == nil && p.StartUp {
 		_, err := a.cli.ContainerStart(a.ctx, r.ID, client.ContainerStartOptions{})
 		if err != nil {
 			return r, err
@@ -288,9 +284,42 @@ func splitCmd(str string) []string {
 	}
 }
 
-func (a *App) RemoveContainer(cont string) error {
-	_, err := a.cli.ContainerRemove(a.ctx, cont, client.ContainerRemoveOptions{
-		Force: false,
+func (a *App) RemoveContainer(cont []string, force bool) (err error) {
+	dialog := a.app.Window.NewWithOptions(application.WebviewWindowOptions{
+		Name:        fmt.Sprintf("Remove Container (%s)", cont),
+		Title:       "Remove Container",
+		Width:       400,
+		Height:      200,
+		AlwaysOnTop: true,
+		Frameless:   true,
+		Hidden:      true,
+		URL:         "wails://localhost:9245/nested/confirm_dialog/remove_container.html",
 	})
+
+	answer := make(chan string)
+
+	dialog.OnWindowEvent(events.Common.WindowClosing, func(event *application.WindowEvent) {
+		//a.log.Debug("窗口关闭！")
+		close(answer)
+	})
+
+	a.app.Event.OnMultiple(fmt.Sprintf("dialog:%s:close", dialog.Name()), func(e *application.CustomEvent) {
+		if e != nil {
+			if data, ok := e.Data.(string); ok {
+				answer <- data
+				return
+			}
+		}
+		answer <- "cancel"
+	}, 1)
+
+	dialog.Show()
+	if r := <-answer; r == "delete" {
+		for _, c := range cont {
+			_, e := a.cli.ContainerRemove(a.ctx, c, client.ContainerRemoveOptions{Force: force})
+			err = errors.Join(err, e)
+		}
+	}
+	dialog.Close()
 	return err
 }

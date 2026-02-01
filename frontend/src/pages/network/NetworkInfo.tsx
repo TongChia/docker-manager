@@ -1,6 +1,6 @@
 import {h} from "preact";
-import {KVTable, PropTable} from "../components/PropTable";
-import {$Network} from "../states/network";
+import {KVTable, PropTable} from "../../components/PropTable";
+import {$Network} from "../../states/network";
 
 
 export const NetworkInfo = ({data}: { data: $Network }) => {

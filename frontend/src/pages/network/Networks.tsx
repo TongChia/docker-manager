@@ -1,16 +1,21 @@
 import {useEffect, useState} from "preact/hooks";
 import {h} from 'preact';
 import {find, map} from "lodash";
-import {cx} from "../utils/classnames";
-import {DeleteBtn, PlusBtn, ShareBtn} from "../components/buttons";
+import {cx} from "../../utils/classnames";
+import {DeleteBtn, PlusBtn, ShareBtn} from "../../components/buttons";
 import {Route, Router} from "preact-iso";
-import {NoContent} from "../components/NoContent";
-import {listen, state, total, update} from "../states/network";
+import {NoContent} from "../../components/NoContent";
+import {listen, state, total, update} from "../../states/network";
 import {NetworkInfo} from "./NetworkInfo";
-import {Loading} from "../components/Loading";
+import {Loading} from "../../components/Loading";
+import {Group, Panel, Separator, useDefaultLayout} from "react-resizable-panels";
 
 
 export function Networks(props: any) {
+    const {defaultLayout, onLayoutChanged} = useDefaultLayout({
+        id: "network-page",
+        storage: localStorage
+    });
     const networks = state.value
     const selected = find(state.value, {Id: props.id})
     const [loading, setLoading] = useState(true)
@@ -23,8 +28,9 @@ export function Networks(props: any) {
     }, []);
 
     return (
-        <div className="drawer-content h-dvh grid grid-cols-[max-content_auto]">
-            <div className="flex flex-col content-normal w-90 h-dvh">
+        <Group id="network-page" className="drawer-content h-dvh bg-base-100" orientation="horizontal"
+               defaultLayout={defaultLayout} onLayoutChanged={onLayoutChanged}>
+            <Panel id="network-menu" className="flex flex-col content-normal" defaultSize={320} minSize={240} maxSize={"50%"}>
                 {/* Navbar */}
                 <nav className="navbar w-full bg-base-300 grow-0 flex justify-between">
                     <div className="px-4">
@@ -58,12 +64,15 @@ export function Networks(props: any) {
                         </ul>
                     }
                 </div>
-            </div>
-
-            <div className="h-dvh flex flex-col bg-base-100 w-full">
+            </Panel>
+            <Separator id="containers-separator"
+                       className="w-1 bg-base-content/10 hover:bg-base-content/20 focus:outline-0 cursor-col-resize outline-nonde z-10"
+                       aria-orientation="horizontal"/>
+            <Panel id="network-info" className="flex flex-col bg-base-100">
 
                 <nav className="navbar w-full grow-0 flex justify-between px-4">
-                    <PlusBtn/>
+                    {/*<PlusBtn/>*/}
+                    <div />
                     <div role="tablist" className="tabs tabs-box capitalize">
                     </div>
                     <ShareBtn/>
@@ -75,7 +84,7 @@ export function Networks(props: any) {
                         <Route default component={NoContent}/>
                     </Router>
                 </div>
-            </div>
-        </div>
+            </Panel>
+        </Group>
     )
 }

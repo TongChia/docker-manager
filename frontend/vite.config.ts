@@ -11,6 +11,7 @@ export default defineConfig({
             input: {
                 main: 'index.html',
                 create_container: 'nested/create_container/index.html',
+                remove_container: 'nested/confirm_dialog/remove_container.html',
             },
         },
     },

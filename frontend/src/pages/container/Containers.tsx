@@ -13,7 +13,8 @@ import {LogsPage} from "./LogsPage";
 import {Group, Panel, Separator, useDefaultLayout} from "react-resizable-panels";
 import {Loading} from "../../components/Loading";
 import {CreateContainerDialog} from "../../../bindings/docker-manager/app";
-import {memoizeUUID} from "../../utils/uuid";
+import {randomId} from "../../utils/uuid";
+import {useDialogMask} from "../../states/theme";
 
 export function Containers(props: any) {
     const {defaultLayout, onLayoutChanged} = useDefaultLayout({
@@ -22,6 +23,7 @@ export function Containers(props: any) {
     });
     const containers = grouped.value
     const [loading, setLoading] = useState(true)
+    const [_, setDialog] = useDialogMask()
 
     useEffect(() => {
         update().catch(console.error).finally(() => setLoading(false))
@@ -29,8 +31,9 @@ export function Containers(props: any) {
     }, []);
 
     const onClickPlusBtn = () => {
-        CreateContainerDialog("create container").catch(console.error).finally(() => {
-            console.debug("Opening compose file...")
+        setDialog(true)
+        CreateContainerDialog(randomId(6)).catch(console.error).finally(() => {
+            setDialog(false)
         })
     }
 

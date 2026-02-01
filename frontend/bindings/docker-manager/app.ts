@@ -63,8 +63,8 @@ export function ContainerLogs(cont: string): $CancellablePromise<string[]> {
     });
 }
 
-export function CreateContainer(params: $models.CreateContainerParams): $CancellablePromise<client$0.ContainerCreateResult> {
-    return $Call.ByID(2559263320, params).then(($result: any) => {
+export function CreateContainer(p: $models.CreateContainerParams): $CancellablePromise<client$0.ContainerCreateResult> {
+    return $Call.ByID(2559263320, p).then(($result: any) => {
         return $$createType6($result);
     });
 }
@@ -113,8 +113,8 @@ export function OpenFolder(path: string): $CancellablePromise<void> {
     return $Call.ByID(3894305329, path);
 }
 
-export function RemoveContainer(cont: string): $CancellablePromise<void> {
-    return $Call.ByID(3139333464, cont);
+export function RemoveContainer(cont: string[], force: boolean): $CancellablePromise<void> {
+    return $Call.ByID(3139333464, cont, force);
 }
 
 export function StartContainer(containerIds: string[]): $CancellablePromise<void> {

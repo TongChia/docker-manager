@@ -3,7 +3,7 @@
 
 @plugin "daisyui" {
     root: ":root";
-    themes: all;
+    themes: light --default, dark --prefersdark, synthwave, dracula, nord, coffee, retro, winter, cupcake;
     logs: true;
 }
 

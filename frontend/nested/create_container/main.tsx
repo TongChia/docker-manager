@@ -1,4 +1,4 @@
-import { Events } from '@wailsio/runtime';
+import { Events, Window } from '@wailsio/runtime';
 import {h, render} from 'preact';
 import "./style.css";
 import {MyDivider, MyInput, MySelect, MyToggle} from "../components/form";
@@ -6,14 +6,14 @@ import {useForm} from "@felte/preact";
 import {CreateContainer} from "../../bindings/docker-manager/app";
 import {CreateContainerParams} from "../../bindings/docker-manager";
 import {RestartPolicyMode} from "../../bindings/github.com/moby/moby/api/types/container";
-import {get, set} from "lodash";
+import {get} from "lodash";
 
 const Main = () => {
-    const closeDialog = () => Events.Emit("dialog:CreateContainerDialog:close")
+    const closeDialog = () => Window.Name().then(name => Events.Emit(`dialog:${name}:close`))
     const { form, data, errors } = useForm({
         onSubmit(values, {event}) {
             const params = new CreateContainerParams(values)
-            set(params, "startUp", get(event as SubmitEvent, ["submitter", "id"]) === "create-start-btn")
+            params.startUp = get(event as SubmitEvent, ["submitter", "id"]) === "create-start-btn"
             CreateContainer(params).then((r) => {
                 console.debug("ContainerCreateResult", r)
                 return closeDialog()
@@ -75,7 +75,7 @@ const Main = () => {
                 <div className="p-4 flex flex-row-reverse justify-start gap-2">
                     <button id="create-start-btn" className="btn btn-xs btn-primary" type="submit" form="config-form">Create & Start</button>
                     <button id="create-btn" className="btn btn-xs btn-soft" type="submit" form="config-form">Create</button>
-                    <button className="btn btn-xs btn-soft" type="reset" onClick={closeDialog}>Cancel</button>
+                    <button id="cancel" className="btn btn-xs btn-soft" onClick={closeDialog}>Cancel</button>
                 </div>
             </div>
         </div>

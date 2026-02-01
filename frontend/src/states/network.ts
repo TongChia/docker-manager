@@ -1,6 +1,6 @@
 import {batch, computed, signal, Signal} from "@preact/signals";
 import {NetworkList} from "../../bindings/docker-manager/app";
-import {assign, get, map, size} from "lodash";
+import {assign, get, map, size, sortBy} from "lodash";
 import {Summary} from "../../bindings/github.com/moby/moby/api/types/network";
 import {Events} from "@wailsio/runtime";
 import {WailsEvent} from "@wailsio/runtime/types/events";
@@ -25,7 +25,7 @@ export const loaded: Signal<boolean> = signal(false)
 export const update = () => NetworkList().then(list => {
     batch(() => {
         loaded.value = true
-        state.value = map(list, to$Network)
+        state.value = sortBy(map(list, to$Network), n => n.Name)
     })
 })
 

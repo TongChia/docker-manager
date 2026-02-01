@@ -1,8 +1,15 @@
-import {h} from 'preact';
+import {h, GenericEventHandler} from 'preact';
+import {ThemePrimary, Theme, themes} from "../states/theme";
+import {get, map} from "lodash";
+import {useContext} from "preact/hooks";
 
 export function Settings() {
+
+    const { theme, setTheme } = useContext(ThemePrimary) || {};
+    const onSelectTheme: GenericEventHandler<HTMLSelectElement> = (ev) => setTheme?.(get(ev.target, 'value', theme) as Theme)
+
     return (
-        <div className="drawer-content h-dvh bg-base-100">
+        <div className="drawer-content h-dvh bg-base-200">
             <nav className="navbar w-full bg-base-300 grow-0 flex justify-between">
                 <div className="px-4">
                     <p className="font-bold">Settings</p>
@@ -18,26 +25,11 @@ export function Settings() {
                         </td>
                         <td className="w-7/12 p-8">
                             <fieldset className="fieldset">
-                                <label className="flex gap-2 cursor-pointer items-center">
-                                    <input type="radio" name="theme-radios" className="radio radio-sm theme-controller" value="default"/>
-                                    Default
-                                </label>
-                                <label className="flex gap-2 cursor-pointer items-center">
-                                    <input type="radio" name="theme-radios" className="radio radio-sm theme-controller" value="retro"/>
-                                    Retro
-                                </label>
-                                <label className="flex gap-2 cursor-pointer items-center">
-                                    <input type="radio" name="theme-radios" className="radio radio-sm theme-controller" value="cyberpunk"/>
-                                    Cyberpunk
-                                </label>
-                                <label className="flex gap-2 cursor-pointer items-center">
-                                    <input type="radio" name="theme-radios" className="radio radio-sm theme-controller" value="valentine"/>
-                                    Valentine
-                                </label>
-                                <label className="flex gap-2 cursor-pointer items-center">
-                                    <input type="radio" name="theme-radios" className="radio radio-sm theme-controller" value="aqua"/>
-                                    Aqua
-                                </label>
+                                <select className="select" value={theme} onChange={onSelectTheme}>
+                                    {map(themes, (v) =>
+                                        <option value={v}>{v}</option>
+                                    )}
+                                </select>
                             </fieldset>
                         </td>
                     </tr>

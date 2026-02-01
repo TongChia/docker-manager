@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Remove Container</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<script type="module">
+    import {Window, Events} from "@wailsio/runtime";
+    window.onClickBtn = async (action) => {
+        const name = await Window.Name()
+        return await Events.Emit(`dialog:${name}:close`, action)
+    }
+</script>
+<div id="app" class="w-full h-dvh flex flex-col bg-base-100 select-none">
+    <div class="grow flex flex-col justify-center items-center header">
+        <h1 class="text-lg font-black p-2">Delete container?</h1>
+        <p class="p-2">Data will be permanently lost.</p>
+    </div>
+    <div class="divider divider-base-content/10 w-full my-0 h-0.5"></div>
+    <div class="p-4 flex flex-row-reverse justify-start gap-2">
+        <button class="btn btn-xs btn-error" onclick="onClickBtn('delete')">Delete</button>
+        <button class="btn btn-xs btn-soft" onclick="onClickBtn('cancel')">Cancel</button>
+    </div>
+</div>
+<!--<script src="./main.tsx" type="module"></script>-->
+</body>
+</html>
