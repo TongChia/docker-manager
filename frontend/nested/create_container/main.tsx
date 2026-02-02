@@ -10,7 +10,7 @@ import {get} from "lodash";
 
 const Main = () => {
     const closeDialog = () => Window.Name().then(name => Events.Emit(`dialog:${name}:close`))
-    const { form, data, errors } = useForm({
+    const { form, errors } = useForm({
         onSubmit(values, {event}) {
             const params = new CreateContainerParams(values)
             params.startUp = get(event as SubmitEvent, ["submitter", "id"]) === "create-start-btn"
@@ -24,9 +24,10 @@ const Main = () => {
         validate: undefined // TODO
     });
     const err = errors()
+    const theme = JSON.parse(localStorage.getItem("theme") || "null")
 
     return (
-        <div className="w-full h-screen bg-base-100 select-none flex flex-col">
+        <div className="w-full h-screen bg-base-100 select-none flex flex-col" data-theme={theme}>
             <h1 className="py-4 px-6 header font-black text-sm">New Container</h1>
             <form id="config-form" className="w-full px-4 grow flex flex-col gap-2 text-sm overflow-y-auto" ref={form}>
                 <div className="bg-base-200 border-base-content/10 rounded-box border flex flex-col">

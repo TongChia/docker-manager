@@ -1,6 +1,6 @@
-import {Fragment, h} from "preact";
+import {Fragment, h, HTMLAttributes} from "preact";
 import {FileNode} from "../../bindings/docker-manager";
-import {map} from "lodash";
+import {cond, eq, get, map} from "lodash";
 import {useState} from "preact/hooks";
 import {FileMode} from "../../bindings/io/fs";
 import {formatSize} from "../utils/docker";
@@ -12,8 +12,10 @@ import {format} from "date-fns";
 type FileType = "Folder" | "Symlink" | "File"
 
 export const FilesTable = ({data, perm}: { data: FileNode | null, perm?: boolean }) => {
+    const [selected, setSelected] = useState("")
+
     return (
-        <table className="table table-zebra table-xs table-fixed truncate">
+        <table className="table table-zebra table-xs table-fixed">
             <thead className="text-xs">
             <tr>
                 <th className="w-6/12">Name</th>
@@ -23,33 +25,32 @@ export const FilesTable = ({data, perm}: { data: FileNode | null, perm?: boolean
             </tr>
             </thead>
             <tbody>
-            {map(data?.child, f => (<FileRow key={f?.n} data={f} perm={perm}/>))}
+            {map(data?.child, f => {
+                if (!f) return ""
+                const fullPath = `${f.p}/${f.n}`
+                return <FileRow key={f.n} data={f} perm={perm} onClick={() => setSelected(fullPath)}
+                             className={cx("hover:bg-primary/30", {"bg-primary/30": selected === fullPath})} />
+            })}
             </tbody>
         </table>
     )
 }
 
-const FileRow = ({data, depth = 1, perm = false}: { data: FileNode | null, depth?: number, perm?: boolean }) => {
+type FileRowProps = { data: FileNode | null, depth?: number, perm?: boolean } & HTMLAttributes<HTMLTableRowElement>
+const FileRow = ({data, depth = 1, perm = false, ...rest}: FileRowProps) => {
     if (!data) return ""
 
     const {n: name, p: path, s: size, m, mod, dir, diff, child} = data
     const rwx = map("rwxrwxrwx", (c, i) => ((m & (1 << (9 - 1 - i))) != 0) ? c : "-")
     const executable = rwx[2] == "x"
     const fileType: FileType = (m & FileMode.ModeDir) != 0 ? "Folder" : (m & FileMode.ModeSymlink) != 0 ? "Symlink" : "File"
-    const fileColor = {
-        "fill-info": dir && diff == DiffType.Unmodified,
-        "fill-neutral-content": !dir && diff == DiffType.Unmodified,
-        "fill-warning": diff == DiffType.Modified,
-        "fill-error": diff == DiffType.Removed,
-        "fill-success": diff == DiffType.Added,
-    }
     const [open, setOpen] = useState(false)
 
     return (
         <>
-            <tr onDblClick={dir ? () => setOpen(!open) : undefined}>
+            <tr onDblClick={dir ? () => setOpen(!open) : undefined} {...rest}>
                 <td className="flex gap-1" style={{"padding-left": depth * 8 + "px"}}>
-                    <FileIcon fileType={fileType} open={open} executable={executable} className={cx("w-4", fileColor)}/>
+                    <FileIcon fileType={fileType} diffType={diff} open={open} executable={executable} />
                     <div className="overflow-hidden text-ellipsis whitespace-nowrap">{name}</div>
                 </td>
                 {perm ?
@@ -65,24 +66,27 @@ const FileRow = ({data, depth = 1, perm = false}: { data: FileNode | null, depth
     )
 }
 
-const FileIcon = ({open, executable, fileType, className}: {
+const FileIcon = ({open, executable, fileType, diffType}: {
     open: boolean,
     executable: boolean,
     fileType: FileType,
-    className: string
+    diffType: DiffType,
 }) => {
-    return (
-        <div>
-            {
-                fileType == "Folder" ?
-                    <label className={cx("swap", {"swap-active": open}, className)}>
-                        <FolderOpenIcon className="w-4 swap-on"/>
-                        <FolderIcon className="w-4 swap-off"/>
-                    </label> :
-                    fileType == "Symlink" ? <FileExportIcon className={className}/> :
-                        executable ? <TerminalIcon className={className}/> :
-                            <DraftIcon className={className}/>
-            }
-        </div>
+    const color = get({
+        [DiffType.Unmodified]: fileType === "Folder" ? "fill-info" : "fill-neutral-content",
+        [DiffType.Modified]: "fill-warning",
+        [DiffType.Removed]: "fill-error",
+        [DiffType.Added]: "fill-success",
+    }, diffType, "fill-neutral-content")
+    const clz = "w-4 " + color
+
+    if (fileType == "Folder") return (
+        <label className={cx("swap", {"swap-active": open}, clz)}>
+            <FolderOpenIcon className="w-4 swap-on"/>
+            <FolderIcon className="w-4 swap-off"/>
+        </label>
     )
+    if (fileType == "Symlink") return <FileExportIcon className={clz}/>
+    if (executable) return <TerminalIcon className={clz}/>
+    return <DraftIcon className={clz}/>
 }

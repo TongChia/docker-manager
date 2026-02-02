@@ -25,7 +25,7 @@ export function Settings() {
                         </td>
                         <td className="w-7/12 p-8">
                             <fieldset className="fieldset">
-                                <select className="select" value={theme} onChange={onSelectTheme}>
+                                <select className="select w-40" value={theme} onChange={onSelectTheme}>
                                     {map(themes, (v) =>
                                         <option value={v}>{v}</option>
                                     )}

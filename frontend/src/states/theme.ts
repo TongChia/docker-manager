@@ -1,6 +1,7 @@
 import {createContext} from "preact";
 import {Dispatch, StateUpdater, useEffect, useState} from "preact/hooks";
 
+
 export const themes = ["default", "light", "dark", "synthwave", "dracula", "nord", "coffee", "retro", "winter", "cupcake"] as const
 export type Theme = typeof themes[number]
 export const ThemePrimary = createContext<{
@@ -10,15 +11,14 @@ export const ThemePrimary = createContext<{
 
 export const useDialogMask = (): [boolean, Dispatch<StateUpdater<boolean>>] => {
     const [mask, setMask] = useState(false)
+    const $ = (s: string) => document.querySelector(s)
 
     useEffect(() => {
         // <dialog className="modal" open={dialog} />
-        let $mask = document.getElementById("dialog-mask") as HTMLDialogElement
+        let $mask = $("dialog#mask") as HTMLDialogElement
         if (!$mask) {
-            $mask = document.createElement("dialog")
-            $mask.id = "dialog-mask"
-            $mask.className = "modal"
-            document.getElementById("app")?.appendChild($mask)
+            $mask = Object.assign(document.createElement("dialog"), {id: "mask", className: "modal"})
+            $("div#app")?.appendChild($mask)
         }
         $mask.open = mask
     }, [mask])
